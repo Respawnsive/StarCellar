@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="StarCellar.Without.Apizr.Views.WineDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:AlohaKit.Controls;assembly=AlohaKit"
+    xmlns:viewModels="clr-namespace:StarCellar.Without.Apizr.ViewModels"
+    Title="{Binding Wine.Name}"
+    x:DataType="viewModels:WineDetailsViewModel">
+
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+        <ScrollView Grid.Row="0">
+            <Grid RowDefinitions="Auto,*" RowSpacing="0">
+
+                <Image
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Aspect="AspectFill"
+                    Source="background.jpg" />
+
+                <Border
+                    Margin="0,80"
+                    HeightRequest="160"
+                    HorizontalOptions="Center"
+                    Stroke="White"
+                    StrokeShape="RoundRectangle 80"
+                    StrokeThickness="6"
+                    VerticalOptions="Center"
+                    WidthRequest="160">
+                    <Image
+                        Aspect="AspectFit"
+                        HeightRequest="130"
+                        HorizontalOptions="Center"
+                        Source="{Binding Wine.ImageUrl, Converter={StaticResource FileUriConverter}, TargetNullValue='wine_bottle.png', FallbackValue='wine_bottle.png'}"
+                        VerticalOptions="Center" />
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Margin="5"
+                    Padding="15"
+                    BackgroundColor="White">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,0,0" />
+                    </Border.StrokeShape>
+                    <Grid RowDefinitions="Auto,Auto,Auto,*">
+                        <Label
+                            Grid.Row="0"
+                            Margin="0,0,0,8"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Text="{Binding Wine.Name}" />
+
+                        <Label
+                            Grid.Row="1"
+                            Margin="0,0,0,8"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Text="{Binding Wine.Description}" />
+
+                        <controls:Rating
+                            Grid.Row="2"
+                            HorizontalOptions="Center"
+                            IsReadOnly="True"
+                            Value="{Binding Wine.Score}" />
+
+                        <Grid
+                            Grid.Row="3"
+                            ColumnDefinitions="*,*"
+                            VerticalOptions="End">
+
+                            <Button
+                                Grid.Column="0"
+                                Margin="8"
+                                Command="{Binding GoToEditCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Text="Edit" />
+
+                            <Button
+                                Grid.Column="1"
+                                Margin="8"
+                                Command="{Binding DeleteWineCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Text="Remove" />
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>

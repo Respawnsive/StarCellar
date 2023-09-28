@@ -1,0 +1,121 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net7.0-windows10.0.19041</TargetFrameworks>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>StarCellar.Without.Apizr</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- Display name -->
+		<ApplicationTitle>StarCellarWithoutApizr</ApplicationTitle>
+
+		<!-- App Identifier -->
+		<ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+		<ApplicationIdGuid>404118D6-CB75-41EE-8EA3-F188B7018627</ApplicationIdGuid>
+
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		<DefaultLanguage>EN-US</DefaultLanguage>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-maccatalyst|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-windows10.0.19041|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-maccatalyst|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-windows10.0.19041|AnyCPU'">
+	  <ApplicationTitle>StarCellarWithoutApizr.app</ApplicationTitle>
+	  <ApplicationId>com.respawnsive.starcellar.without.apizr.app</ApplicationId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" />
+
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\appiconfg.svg" Color="#512BD4" />
+
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Fonts\OpenSans-Semibold.ttf" />
+	  <None Remove="Resources\Images\background.jpg" />
+	  <None Remove="Resources\Images\wine_bottle.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AlohaKit" Version="1.0.74" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+	  <PackageReference Include="MiniValidation" Version="0.8.0" />
+	  <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
+	  <PackageReference Include="UraniumUI" Version="2.5.5" />
+	  <PackageReference Include="UraniumUI.Blurs" Version="2.5.5" />
+	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.5.5" />
+	  <PackageReference Include="UraniumUI.Material" Version="2.5.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\WineEditPage.xaml.cs">
+	    <DependentUpon>WineEditPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\WineDetailsPage.xaml.cs">
+	    <DependentUpon>WineDetailsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\CellarPage.xaml.cs">
+	    <DependentUpon>CellarPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Resources\Styles\Colors.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Styles.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+</Project>

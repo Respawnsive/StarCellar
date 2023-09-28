@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="StarCellar.Without.Apizr.Views.WineEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:AlohaKit.Controls;assembly=AlohaKit"
+    xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+    xmlns:viewModels="clr-namespace:StarCellar.Without.Apizr.ViewModels"
+    Title="{Binding Wine.Name, TargetNullValue='Add a wine', FallbackValue='Add a wine'}"
+    x:DataType="viewModels:WineEditViewModel">
+
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+        <ScrollView Grid.Row="0">
+            <Grid RowDefinitions="Auto,*" RowSpacing="0">
+
+                <Image
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Aspect="AspectFill"
+                    Source="background.jpg" />
+
+                <Border
+                    Grid.Row="0"
+                    Margin="0,80"
+                    HeightRequest="160"
+                    HorizontalOptions="Center"
+                    Stroke="White"
+                    StrokeShape="RoundRectangle 80"
+                    StrokeThickness="6"
+                    VerticalOptions="Center"
+                    WidthRequest="160">
+                    <Image
+                        Aspect="AspectFit"
+                        HeightRequest="130"
+                        HorizontalOptions="Center"
+                        Source="{Binding Wine.ImageUrl, Converter={StaticResource FileUriConverter}, TargetNullValue='wine_bottle.png', FallbackValue='wine_bottle.png'}"
+                        VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SetImageCommand}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Border>
+
+                <ActivityIndicator
+                    Grid.Row="0"
+                    Margin="0,10"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalOptions="End"
+                    Color="White" />
+
+                <Border
+                    Grid.Row="1"
+                    Margin="5"
+                    Padding="15"
+                    BackgroundColor="White">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,0,0" />
+                    </Border.StrokeShape>
+
+                    <input:FormView Spacing="20" SubmitCommand="{Binding SaveCommand}">
+                        <material:TextField
+                            Title="Name"
+                            AllowClear="True"
+                            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                                   Glyph={x:Static m:MaterialRegular.Title}}"
+                            ReturnType="Next"
+                            Text="{Binding Wine.Name}">
+                            <validation:RequiredValidation Message="Name required" />
+                            <validation:RegexValidation Message="Invalid name format" Pattern="{x:Static input:AdvancedEntry.REGEX_LETTERONLY}" />
+                        </material:TextField>
+
+                        <material:EditorField
+                            Title="Description"
+                            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                                   Glyph={x:Static m:MaterialRegular.Edit}}"
+                            Text="{Binding Wine.Description}">
+                            <material:EditorField.Validations>
+                                <validation:RequiredValidation Message="Description required" />
+                                <validation:RegexValidation Message="Invalid description format" Pattern="{x:Static input:AdvancedEntry.REGEX_LETTERONLY}" />
+                            </material:EditorField.Validations>
+                        </material:EditorField>
+
+                        <controls:Rating HorizontalOptions="Center" Value="{Binding Wine.Score, Mode=TwoWay}" />
+
+                        <Button
+                            Margin="0,15"
+                            input:FormView.IsSubmitButton="True"
+                            FontAttributes="Bold"
+                            Text="SAVE" />
+
+                    </input:FormView>
+                </Border>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>
