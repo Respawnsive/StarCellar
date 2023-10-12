@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using Apizr;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
@@ -38,11 +39,9 @@ public static class MauiProgram
             .AddSingleton(SecureStorage.Default)
             .AddSingleton<INavigationService, NavigationService>();
 
-        builder.Services.AddRefitClient<ICellarApi>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri(Constants.BaseAddress));
+        builder.Services.AddApizrManagerFor<ICellarApi>();
 
-        builder.Services.AddRefitClient<IFileApi>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri(Constants.BaseAddress));
+        builder.Services.AddApizrManagerFor<IFileApi>();
 
         // Presentation
         builder.Services

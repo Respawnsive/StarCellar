@@ -1,4 +1,5 @@
-﻿using StarCellar.With.Apizr.Services.Apis.Cellar;
+﻿using Apizr;
+using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Views;
@@ -7,14 +8,14 @@ namespace StarCellar.With.Apizr.ViewModels;
 
 public partial class CellarViewModel : BaseViewModel
 {
-    private readonly ICellarApi _cellarApi;
+    private readonly IApizrManager<ICellarApi> _cellarApiManager;
     private readonly IConnectivity _connectivity;
 
-    public CellarViewModel(INavigationService navigationService, 
-        ICellarApi cellarApi, 
+    public CellarViewModel(INavigationService navigationService,
+        IApizrManager<ICellarApi> cellarApiManager, 
         IConnectivity connectivity) : base(navigationService)
     {
-        _cellarApi = cellarApi;
+        _cellarApiManager = cellarApiManager;
         _connectivity = connectivity;
     }
 
@@ -39,7 +40,7 @@ public partial class CellarViewModel : BaseViewModel
 
             IsBusy = true;
 
-            var wines = await _cellarApi.GetWinesAsync();
+            var wines = await _cellarApiManager.ExecuteAsync(api => api.GetWinesAsync());
 
             if(Wines.Count != 0)
                 Wines.Clear();

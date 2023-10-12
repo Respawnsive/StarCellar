@@ -1,9 +1,10 @@
-﻿using Refit;
+﻿using Apizr;
+using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 
 namespace StarCellar.With.Apizr.Services.Apis.Cellar
 {
-    [Headers("Authorization: Bearer")]
+    [WebApi(Constants.BaseAddress)]
     public interface ICellarApi
     {
         [Get("/wines")]

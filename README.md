@@ -1,11 +1,22 @@
 # StarCellar
-Apizr walkthrough tutorial \o/
+A walkthrough tutorial about Apizr, a Refit based web api client manager, but resilient (retry, connectivity, cache, auth, log, priority, etc...).
 
-This repository contains the source code of the StarCellar sample app built during the corresponding YouTube end-to-end walkthrough.
-Each module covered get a chapter on YouTube and a dedicated branch on GitHub.
+This repository contains the source code of the StarCellar sample app built during the corresponding end-to-end walkthrough.
+Each covered module get a chapter on the YouTube video and a dedicated branch on GitHub with both With and Without Apizr sample project.
 The main branch get the full picture with all modules consolidated into the solution.
 You can compare main branch's commits to see what has changed between modules, or modules branch's commits to get a more detailed picture.
-You can switch branches to jump between modules within the same opened solution.
+You can switch between branches to jump between modules within the same opened solution.
+Each module begins from the end of the previous one.
+
+Before you jump into this walkthrough, it is highly recommended to take a look at the official documentation of Apizr and its source code:
+
+[![Read - Documentation](https://img.shields.io/badge/read-documentation-blue?style=for-the-badge)](https://apizr.net/ "Go to project documentation") [![Browse - Source](https://img.shields.io/badge/browse-source_code-lightgrey?style=for-the-badge)](https://github.com/Respawnsive/Apizr "Go to project repository")
+
+If you want to get a quick and small picture of it, please head to our Apizr version of JM's [MonkeyFinder sample tutorial](https://www.github.com).
+
+This StarCellar walkthrough aims to dive pretty much deeper into most of Apizr features than the MonkeyFinder one, so take a breath and let's dive!
+
+Here is the module list:
 
 |Modules|Video chapters|Code branches|
 |---|---|---|

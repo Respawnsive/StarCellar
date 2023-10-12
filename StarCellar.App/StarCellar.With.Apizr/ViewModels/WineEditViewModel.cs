@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using Apizr;
+using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.With.Apizr.Services.Apis.Files;
@@ -9,21 +10,21 @@ namespace StarCellar.With.Apizr.ViewModels;
 [QueryProperty(nameof(Wine), nameof(Wine))]
 public partial class WineEditViewModel : BaseViewModel
 {
-    private readonly ICellarApi _cellarApi;
+    private readonly IApizrManager<ICellarApi> _cellarApiManager;
     private readonly IConnectivity _connectivity;
     private readonly IFilePicker _filePicker;
-    private readonly IFileApi _fileApi;
+    private readonly IApizrManager<IFileApi> _fileApiManager;
 
     public WineEditViewModel(INavigationService navigationService,
-        ICellarApi cellarApi,
+        IApizrManager<ICellarApi> cellarApiManager,
         IConnectivity connectivity,
         IFilePicker filePicker,
-        IFileApi fileApi) : base(navigationService)
+        IApizrManager<IFileApi> fileApiManager) : base(navigationService)
     {
-        _cellarApi = cellarApi;
+        _cellarApiManager = cellarApiManager;
         _connectivity = connectivity;
         _filePicker = filePicker;
-        _fileApi = fileApi;
+        _fileApiManager = fileApiManager;
     }
 
     [ObservableProperty] private Wine _wine;
@@ -58,7 +59,7 @@ public partial class WineEditViewModel : BaseViewModel
 
                 await using var stream = await result.OpenReadAsync();
                 var streamPart = new StreamPart(stream, result.FileName);
-                Wine.ImageUrl = await _fileApi.UploadAsync(streamPart);
+                Wine.ImageUrl = await _fileApiManager.ExecuteAsync(api => api.UploadAsync(streamPart));
             }
         }
         catch (Exception ex)
@@ -97,9 +98,9 @@ public partial class WineEditViewModel : BaseViewModel
             IsBusy = true;
 
             if (Wine.Id == Guid.Empty)
-                Wine = await _cellarApi.CreateWineAsync(Wine);
+                Wine = await _cellarApiManager.ExecuteAsync(api => api.CreateWineAsync(Wine));
             else
-                await _cellarApi.UpdateWineAsync(Wine.Id, Wine);
+                await _cellarApiManager.ExecuteAsync(api => api.UpdateWineAsync(Wine.Id, Wine));
 
             await NavigationService.GoToAsync("..");
         }
