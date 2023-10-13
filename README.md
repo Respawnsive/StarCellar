@@ -21,7 +21,7 @@ Here is the module list:
 |Modules|Video chapters|Code branches|Doc articles|
 |---|---|---|---|
 |APIZR001|[Getting started](https://www.youtube.com)|[01-Getting_started](https://github.com/Respawnsive/StarCellar/tree/01-Getting_started)|[Getting started classic](https://www.apizr.net/articles/gettingstarted_classic.html?tabs=tabid-extended)|
-|APIZR002|[Adjusting basic options](https://www.youtube.com)|[02-Adjusting_basics](https://www.github.com)|[Configuring](https://www.apizr.net/articles/config.html)|
+|APIZR002|[Adjusting basic options](https://www.youtube.com)|[02-Adjusting_basics](https://github.com/Respawnsive/StarCellar/tree/02-Adjusting_basics)|[Configuring](https://www.apizr.net/articles/config.html)|
 |APIZR003|[Configuring logging with any MS Logging provider](https://www.youtube.com)|[03-Configuring_logging](https://www.github.com)|[Logging](https://www.apizr.net/articles/config_logging.html?tabs=tabid-designing), [Logger](https://www.apizr.net/articles/config_logger.html?tabs=tabid-static)|
 |APIZR004|[Applying policies with Polly](https://www.youtube.com)|[04-Applying_policies](https://www.github.com)|[Policies](https://www.apizr.net/articles/config_policies.html?tabs=tabid-static)|
 |APIZR005|[Checking connectivity with an external plugin](https://www.youtube.com)|[05-Checking_connectivity](https://www.github.com)|[Connectivity](https://www.apizr.net/articles/config_connectivity.html?tabs=tabid-static)|
