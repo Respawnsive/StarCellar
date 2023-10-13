@@ -39,9 +39,9 @@ public static class MauiProgram
             .AddSingleton(SecureStorage.Default)
             .AddSingleton<INavigationService, NavigationService>();
 
-        builder.Services.AddApizrManagerFor<ICellarApi>();
-
-        builder.Services.AddApizrManagerFor<IFileApi>();
+        builder.Services.AddApizr(registry => 
+            registry.AddManagerFor<ICellarApi>()
+                .AddManagerFor<IFileApi>());
 
         // Presentation
         builder.Services
