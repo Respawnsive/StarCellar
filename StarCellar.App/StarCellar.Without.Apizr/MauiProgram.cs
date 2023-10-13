@@ -1,9 +1,12 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Reflection;
+using CommunityToolkit.Maui;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Files;
 using StarCellar.Without.Apizr.Services.Navigation;
+using StarCellar.Without.Apizr.Settings;
 using StarCellar.Without.Apizr.ViewModels;
 using StarCellar.Without.Apizr.Views;
 using UraniumUI;
@@ -31,18 +34,36 @@ public static class MauiProgram
 		builder.Logging.AddDebug()
             .SetMinimumLevel(LogLevel.Trace);
 #endif
+        // Settings
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream($"{typeof(AppSettings).Namespace}.appsettings.json");
 
-		// Infrastructure
+        var config = new ConfigurationBuilder()
+        .AddJsonStream(stream!)
+        .Build();
+
+        builder.Configuration.AddConfiguration(config);
+
+        // Plugins
         builder.Services.AddSingleton(Connectivity.Current)
             .AddSingleton(FilePicker.Default)
             .AddSingleton(SecureStorage.Default)
             .AddSingleton<INavigationService, NavigationService>();
 
+        // Refit
         builder.Services.AddRefitClient<ICellarApi>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri(Constants.BaseAddress));
+            .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
+                .GetRequiredService<IConfiguration>()
+                .GetRequiredSection("AppSettings")
+                .Get<AppSettings>()
+                .BaseAddress));
 
         builder.Services.AddRefitClient<IFileApi>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri(Constants.BaseAddress));
+            .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
+                .GetRequiredService<IConfiguration>()
+                .GetRequiredSection("AppSettings")
+                .Get<AppSettings>()
+                .BaseAddress));
 
         // Presentation
         builder.Services
