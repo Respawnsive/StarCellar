@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using CommunityToolkit.Maui;
+using HttpTracer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -52,14 +53,26 @@ public static class MauiProgram
             .AddSingleton<INavigationService, NavigationService>();
 
         // Refit
-        builder.Services.AddRefitClient<ICellarApi>()
+        builder.Services.AddRefitClient<ICellarApi>(new RefitSettings
+            {
+                HttpMessageHandlerFactory = () => new HttpTracerHandler
+                {
+                    Verbosity = HttpMessageParts.All
+                }
+            })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
                 .GetRequiredSection("AppSettings")
                 .Get<AppSettings>()
                 .BaseAddress));
 
-        builder.Services.AddRefitClient<IFileApi>()
+        builder.Services.AddRefitClient<IFileApi>(new RefitSettings
+            {
+                HttpMessageHandlerFactory = () => new HttpTracerHandler
+                {
+                    Verbosity = HttpMessageParts.All
+                }
+            })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
                 .GetRequiredSection("AppSettings")
