@@ -43,6 +43,7 @@
 	  <None Remove="Resources\Fonts\OpenSans-Semibold.ttf" />
 	  <None Remove="Resources\Images\background.jpg" />
 	  <None Remove="Resources\Images\wine_bottle.png" />
+	  <None Remove="Settings\appsettings.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -50,6 +51,8 @@
 	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="6.1.0" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.91" />
 	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />

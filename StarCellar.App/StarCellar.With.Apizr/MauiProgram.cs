@@ -1,10 +1,13 @@
-﻿using Apizr;
+﻿using System.Reflection;
+using Apizr;
 using CommunityToolkit.Maui;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Files;
 using StarCellar.With.Apizr.Services.Navigation;
+using StarCellar.With.Apizr.Settings;
 using StarCellar.With.Apizr.ViewModels;
 using StarCellar.With.Apizr.Views;
 using UraniumUI;
@@ -33,7 +36,17 @@ public static class MauiProgram
             .SetMinimumLevel(LogLevel.Trace);
 #endif
 
-		// Infrastructure
+        // Settings
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream($"{typeof(AppSettings).Namespace}.appsettings.json");
+
+        var config = new ConfigurationBuilder()
+            .AddJsonStream(stream!)
+            .Build();
+
+        builder.Configuration.AddConfiguration(config);
+
+        // Plugins
         builder.Services.AddSingleton(Connectivity.Current)
             .AddSingleton(FilePicker.Default)
             .AddSingleton(SecureStorage.Default)
@@ -46,7 +59,12 @@ public static class MauiProgram
                 .AddManagerFor<IFileApi>(),
 
             options => options
-                .WithBaseAddress(Constants.BaseAddress));
+                .WithBaseAddress(
+                    sp => sp
+                        .GetRequiredService<IConfiguration>()
+                        .GetRequiredSection("AppSettings")
+                        .Get<AppSettings>()
+                        .BaseAddress));
 
         // Presentation
         builder.Services
