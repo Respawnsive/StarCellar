@@ -5,21 +5,22 @@ using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 
 namespace StarCellar.With.Apizr.Services.Apis.Cellar
 {
+    [BaseAddress("/wines")]
     public interface ICellarApi
     {
-        [Get("/wines")]
+        [Get("/")]
         Task<IEnumerable<Wine>> GetWinesAsync();
 
-        [Get("/wines/{id}")]
+        [Get("/{id}")]
         Task<Wine> GetWineDetailsAsync(Guid id);
 
-        [Post("/wines")]
+        [Post("/")]
         Task<Wine> CreateWineAsync(Wine item);
         
-        [Put("/wines/{id}")]
+        [Put("/{id}")]
         Task UpdateWineAsync(Guid id, Wine item);
         
-        [Delete("/wines/{id}")]
+        [Delete("/{id}")]
         Task DeleteWineAsync(Guid id);
     }
 }
