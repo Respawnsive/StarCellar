@@ -20,19 +20,19 @@ Here is the module list:
 
 |Modules|Video chapters|Code branches|Doc articles|
 |---|---|---|---|
-|APIZR001|[Getting started](https://www.youtube.com)|[01-getting_started](https://www.github.com)|[Getting started classic](https://www.apizr.net/articles/gettingstarted_classic.html?tabs=tabid-extended)|
-|APIZR002|[Adjusting basic options](https://www.youtube.com)|[02-adjusting_basics](https://www.github.com)|[Configuring](https://www.apizr.net/articles/config.html)|
-|APIZR003|[Configuring logging with any MS Logging provider](https://www.youtube.com)|[03-configuring_logging](https://www.github.com)|[Logging](https://www.apizr.net/articles/config_logging.html?tabs=tabid-designing), [Logger](https://www.apizr.net/articles/config_logger.html?tabs=tabid-static)|
-|APIZR004|[Applying policies with Polly](https://www.youtube.com)|[04-applying_policies](https://www.github.com)|[Policies](https://www.apizr.net/articles/config_policies.html?tabs=tabid-static)|
-|APIZR005|[Checking connectivity with an external plugin](https://www.youtube.com)|[05-checking_connectivity](https://www.github.com)|[Connectivity](https://www.apizr.net/articles/config_connectivity.html?tabs=tabid-static)|
-|APIZR006|[Managing request priorities with Fusillade](https://www.youtube.com)|[06-prioritizing_requests](https://www.github.com)|[Priority](https://www.apizr.net/articles/config_priority.html?tabs=tabid-designing)|
-|APIZR007|[Handling authentication](https://www.youtube.com)|[07-handling_authentication](https://www.github.com)|[Authentication](https://www.apizr.net/articles/config_auth.html?tabs=tabid-static)|
-|APIZR008|[Caching data with Akavache, MonkeyCache or any MS Caching provider](https://www.youtube.com)|[08-caching_data](https://www.github.com)|[Data caching](https://www.apizr.net/articles/config_datacaching.html?tabs=tabid-inmemory%2Ctabid-static)|
-|APIZR009|[Catching exceptions](https://www.youtube.com)|[09-catching_exceptions](https://www.github.com)|[Exception handling](https://www.apizr.net/articles/config_exceptions.html?tabs=tabid-registering)|
-|APIZR010|[Canceling and timing out](https://www.youtube.com)|[10-canceling_requests](https://www.github.com)|[Cancellation](https://www.apizr.net/articles/config_cancellation.html), [Timeout](https://www.apizr.net/articles/config_timeout.html?tabs=tabid-designing)|
-|APIZR011|[Mapping data with AutoMapper or Mapster](https://www.youtube.com)|[11-mapping_data](https://www.github.com)|[Data mapping](https://www.apizr.net/articles/config_datamapping.html?tabs=tabid-static)|
-|APIZR012|[Sending request with MediatR](https://www.youtube.com)|[12-sending_requests](https://www.github.com)|[MediatR](https://www.apizr.net/articles/config_mediatr.html?tabs=tabid-imediator)|
-|APIZR013|[Returning option result with Optional.Async](https://www.youtube.com)|[13-returning_option](https://www.github.com)|[Optional.Async](https://www.apizr.net/articles/config_optional.html?tabs=tabid-imediator)|
-|APIZR014|[Downloading and uploading files with FileTransfer](https://www.youtube.com)|[14-transfering_files](https://www.github.com)|[File transfer](https://www.apizr.net/articles/config_transfer.html?tabs=tabid-upload%2Ctabid-static%2Ctabid-globally)|
-|APIZR015|[Customizing advanced options](https://www.youtube.com)|[15-customizing_further](https://www.github.com)|[Configuring](https://www.apizr.net/articles/config.html)|
-|APIZR016|[Generating all from Swagger with NSwag](https://www.youtube.com)|[16-generating_all](https://www.github.com)|[NSwag](https://www.apizr.net/articles/tools_nswag.html)|
+|APIZR001|[Getting started](https://www.youtube.com)|[01-Getting_started](https://github.com/Respawnsive/StarCellar/tree/01-Getting_started)|[Getting started classic](https://www.apizr.net/articles/gettingstarted_classic.html?tabs=tabid-extended)|
+|APIZR002|[Adjusting basic options](https://www.youtube.com)|[02-Adjusting_basics](https://www.github.com)|[Configuring](https://www.apizr.net/articles/config.html)|
+|APIZR003|[Configuring logging with any MS Logging provider](https://www.youtube.com)|[03-Configuring_logging](https://www.github.com)|[Logging](https://www.apizr.net/articles/config_logging.html?tabs=tabid-designing), [Logger](https://www.apizr.net/articles/config_logger.html?tabs=tabid-static)|
+|APIZR004|[Applying policies with Polly](https://www.youtube.com)|[04-Applying_policies](https://www.github.com)|[Policies](https://www.apizr.net/articles/config_policies.html?tabs=tabid-static)|
+|APIZR005|[Checking connectivity with an external plugin](https://www.youtube.com)|[05-Checking_connectivity](https://www.github.com)|[Connectivity](https://www.apizr.net/articles/config_connectivity.html?tabs=tabid-static)|
+|APIZR006|[Managing request priorities with Fusillade](https://www.youtube.com)|[06-Prioritizing_requests](https://www.github.com)|[Priority](https://www.apizr.net/articles/config_priority.html?tabs=tabid-designing)|
+|APIZR007|[Handling authentication](https://www.youtube.com)|[07-Handling_authentication](https://www.github.com)|[Authentication](https://www.apizr.net/articles/config_auth.html?tabs=tabid-static)|
+|APIZR008|[Caching data with Akavache, MonkeyCache or any MS Caching provider](https://www.youtube.com)|[08-Caching_data](https://www.github.com)|[Data caching](https://www.apizr.net/articles/config_datacaching.html?tabs=tabid-inmemory%2Ctabid-static)|
+|APIZR009|[Catching exceptions](https://www.youtube.com)|[09-Catching_exceptions](https://www.github.com)|[Exception handling](https://www.apizr.net/articles/config_exceptions.html?tabs=tabid-registering)|
+|APIZR010|[Canceling and timing out](https://www.youtube.com)|[10-Canceling_requests](https://www.github.com)|[Cancellation](https://www.apizr.net/articles/config_cancellation.html), [Timeout](https://www.apizr.net/articles/config_timeout.html?tabs=tabid-designing)|
+|APIZR011|[Mapping data with AutoMapper or Mapster](https://www.youtube.com)|[11-Mapping_data](https://www.github.com)|[Data mapping](https://www.apizr.net/articles/config_datamapping.html?tabs=tabid-static)|
+|APIZR012|[Sending request with MediatR](https://www.youtube.com)|[12-Sending_requests](https://www.github.com)|[MediatR](https://www.apizr.net/articles/config_mediatr.html?tabs=tabid-imediator)|
+|APIZR013|[Returning option result with Optional.Async](https://www.youtube.com)|[13-Returning_option](https://www.github.com)|[Optional.Async](https://www.apizr.net/articles/config_optional.html?tabs=tabid-imediator)|
+|APIZR014|[Downloading and uploading files with FileTransfer](https://www.youtube.com)|[14-Transfering_files](https://www.github.com)|[File transfer](https://www.apizr.net/articles/config_transfer.html?tabs=tabid-upload%2Ctabid-static%2Ctabid-globally)|
+|APIZR015|[Customizing advanced options](https://www.youtube.com)|[15-Customizing_further](https://www.github.com)|[Configuring](https://www.apizr.net/articles/config.html)|
+|APIZR016|[Generating all from Swagger with NSwag](https://www.youtube.com)|[16-Generating_all](https://www.github.com)|[NSwag](https://www.apizr.net/articles/tools_nswag.html)|
