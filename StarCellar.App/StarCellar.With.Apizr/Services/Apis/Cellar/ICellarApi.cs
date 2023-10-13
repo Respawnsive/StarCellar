@@ -1,11 +1,12 @@
 ﻿using Apizr;
+using Apizr.Logging.Attributes;
 using Apizr.Configuring;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 
 namespace StarCellar.With.Apizr.Services.Apis.Cellar
 {
-    [BaseAddress("/wines")]
+    [BaseAddress("/wines"), Log]
     public interface ICellarApi
     {
         [Get("/")]
