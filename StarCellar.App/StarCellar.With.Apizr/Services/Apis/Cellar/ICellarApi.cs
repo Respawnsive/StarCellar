@@ -5,7 +5,6 @@ using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 
 namespace StarCellar.With.Apizr.Services.Apis.Cellar
 {
-    [BaseAddress(Constants.BaseAddress)]
     public interface ICellarApi
     {
         [Get("/wines")]
