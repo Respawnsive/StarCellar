@@ -3,7 +3,7 @@ using Refit;
 
 namespace StarCellar.With.Apizr.Services.Apis.Files
 {
-    [WebApi(Constants.BaseAddress)]
+    [WebApi]
     public interface IFileApi
     {
         [Multipart]
