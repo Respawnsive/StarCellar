@@ -2,6 +2,7 @@
 using Apizr;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
@@ -38,10 +39,10 @@ public static class MauiProgram
 
         // Settings
         var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream($"{typeof(AppSettings).Namespace}.appsettings.json");
+        var fileProvider = new EmbeddedFileProvider(assembly);
 
         var config = new ConfigurationBuilder()
-            .AddJsonStream(stream!)
+            .AddJsonFile(fileProvider, "appsettings.json", optional: false, reloadOnChange: false)
             .Build();
 
         builder.Configuration.AddConfiguration(config);
