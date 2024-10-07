@@ -8,6 +8,6 @@ namespace StarCellar.Without.Apizr
 {
     internal static class Constants
     {
-        internal const string BaseAddress = "https://hgksj1pl-7015.uks1.devtunnels.ms";
+        internal const string BaseAddress = "https://rx6z0kd7-7015.uks1.devtunnels.ms";
     }
 }

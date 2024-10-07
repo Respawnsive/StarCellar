@@ -139,6 +139,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//builder.Services.AddAntiforgery();
 
 var app = builder.Build();
 
@@ -157,6 +158,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
+//app.UseAntiforgery();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
@@ -177,7 +179,7 @@ app.MapPost("refresh", UsersHandler.RefreshTokenAsync);
 app.MapPost("signout", UsersHandler.SignOutAsync).RequireAuthorization(Constants.Policies.Any);
 app.MapGet("profile", UsersHandler.GetProfileAsync).RequireAuthorization(Constants.Policies.Any);
 
-app.MapPost("/upload", FilesHandler.UploadAsync);
+app.MapPost("/upload", FilesHandler.UploadAsync).DisableAntiforgery();
 
 var wineRoutes = app.MapGroup("/wines");//.RequireAuthorization(Constants.Policies.Any);
 wineRoutes.MapGet("/", WinesHandler.GetAllWines).WithOpenApi();

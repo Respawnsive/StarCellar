@@ -1,10 +1,11 @@
 ﻿using Apizr;
+using Apizr.Configuring;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 
 namespace StarCellar.With.Apizr.Services.Apis.Cellar
 {
-    [WebApi(Constants.BaseAddress)]
+    [BaseAddress(Constants.BaseAddress)]
     public interface ICellarApi
     {
         [Get("/wines")]

@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net7.0-windows10.0.19041</TargetFrameworks>
+		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<WindowsSdkPackageVersion>10.0.19041.41</WindowsSdkPackageVersion>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>StarCellar.With.Apizr</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -14,52 +15,11 @@
 
 		<!-- App Identifier -->
 		<ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-		<ApplicationIdGuid>249BAEBE-CBC3-410E-AC3B-70E459D368C3</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 		<DefaultLanguage>EN-US</DefaultLanguage>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-maccatalyst|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-windows10.0.19041|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-maccatalyst|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-windows10.0.19041|AnyCPU'">
-	  <ApplicationTitle>StarCellarWithApizr.app</ApplicationTitle>
-	  <ApplicationId>com.respawnsive.starcellar.with.apizr.app</ApplicationId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -86,16 +46,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="AlohaKit" Version="1.0.74" />
-	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="5.4.0" />
-	  <PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-	  <PackageReference Include="MiniValidation" Version="0.8.0" />
-	  <PackageReference Include="UraniumUI" Version="2.5.6" />
-	  <PackageReference Include="UraniumUI.Blurs" Version="2.5.6" />
-	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.5.6" />
-	  <PackageReference Include="UraniumUI.Material" Version="2.5.6" />
+	  <PackageReference Include="AlohaKit" Version="1.0.100" />
+	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="6.1.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.91" />
+	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />
+	  <PackageReference Include="MiniValidation" Version="0.9.1" />
+	  <PackageReference Include="UraniumUI" Version="2.10.2" />
+	  <PackageReference Include="UraniumUI.Blurs" Version="2.10.2" />
+	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.10.2" />
+	  <PackageReference Include="UraniumUI.Material" Version="2.10.2" />
 	</ItemGroup>
 
 	<ItemGroup>
