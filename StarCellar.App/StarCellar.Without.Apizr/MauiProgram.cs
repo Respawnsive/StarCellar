@@ -1,9 +1,16 @@
-﻿using System.Reflection;
+﻿using System.Net;
+using System.Reflection;
 using CommunityToolkit.Maui;
 using HttpTracer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Fallback;
+using Polly.Registry;
+using Polly.Retry;
 using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Files;
@@ -64,7 +71,23 @@ public static class MauiProgram
                 .GetRequiredService<IConfiguration>()
                 .GetRequiredSection("AppSettings")
                 .Get<AppSettings>()
-                .BaseAddress));
+                .BaseAddress))
+            .AddStandardResilienceHandler();
+            //.Configure(o =>
+            //{
+            //    o.CircuitBreaker.MinimumThroughput = 10;
+            //})
+            //.AddResilienceHandler("myHandler", b =>
+            //{
+            //    b.AddFallback(new FallbackStrategyOptions<HttpResponseMessage>()
+            //        {
+            //            FallbackAction = _ => Outcome.FromResultAsValueTask(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable))
+            //        })
+            //        .AddConcurrencyLimiter(100)
+            //        .AddRetry(new HttpRetryStrategyOptions())
+            //        .AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions())
+            //        .AddTimeout(new HttpTimeoutStrategyOptions());
+            //});
 
         builder.Services.AddRefitClient<IFileApi>(new RefitSettings
             {
