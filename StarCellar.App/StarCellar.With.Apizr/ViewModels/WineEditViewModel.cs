@@ -48,19 +48,18 @@ public partial class WineEditViewModel : BaseViewModel
                     return;
                 }
 
-                if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-                {
-                    await NavigationService.DisplayAlert("No connectivity!",
-                        $"Please check internet and try again.", "OK");
-                    return;
-                }
-
                 IsBusy = true;
 
                 await using var stream = await result.OpenReadAsync();
                 var streamPart = new StreamPart(stream, result.FileName);
                 Wine.ImageUrl = await _fileApiManager.ExecuteAsync(api => api.UploadAsync(streamPart));
             }
+        }
+        catch (Exception ex) when (ex.InnerException is IOException ioEx)
+        {
+            Debug.WriteLine($"Unable to get Wines: {ioEx.Message}");
+            await NavigationService.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
         }
         catch (Exception ex)
         {
@@ -88,13 +87,6 @@ public partial class WineEditViewModel : BaseViewModel
                 return;
             }
 
-            if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                await NavigationService.DisplayAlert("No connectivity!",
-                    $"Please check internet and try again.", "OK");
-                return;
-            }
-
             IsBusy = true;
 
             if (Wine.Id == Guid.Empty)
@@ -103,6 +95,12 @@ public partial class WineEditViewModel : BaseViewModel
                 await _cellarApiManager.ExecuteAsync(api => api.UpdateWineAsync(Wine.Id, Wine));
 
             await NavigationService.GoToAsync("..");
+        }
+        catch (Exception ex) when (ex.InnerException is IOException ioEx)
+        {
+            Debug.WriteLine($"Unable to get Wines: {ioEx.Message}");
+            await NavigationService.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
         }
         catch (Exception ex)
         {

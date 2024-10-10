@@ -67,11 +67,6 @@ public static class MauiProgram
         builder.Services.AddApizr(
             registry => registry
                 .AddManagerFor<ICellarApi>()
-                    //options => options
-                    //    .WithRequestOptions(nameof(ICellarApi.GetWinesAsync), 
-                    //        requestOptions => requestOptions
-                    //            .WithResiliencePipelineKeys(["CustomPipeline"]))
-                    //    .WithResiliencePipelineKeys(["CustomPipeline"]))
                 .AddManagerFor<IFileApi>(),
 
             options => options
@@ -81,26 +76,9 @@ public static class MauiProgram
                         .GetRequiredSection("AppSettings")
                         .Get<AppSettings>()
                         .BaseAddress)
-                //.WithResiliencePipelineKeys(["CustomPipeline"])
                 .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
-                    .AddStandardResilienceHandler()));
-                    //.Configure(o =>
-                    //{
-                    //    o.CircuitBreaker.MinimumThroughput = 10;
-                    //})));
-                    //.AddResilienceHandler("myHandler", b =>
-                    //{
-                    //    b.AddFallback(new FallbackStrategyOptions<HttpResponseMessage>()
-                    //        {
-                    //            FallbackAction = _ =>
-                    //                Outcome.FromResultAsValueTask(
-                    //                    new HttpResponseMessage(HttpStatusCode.ServiceUnavailable))
-                    //        })
-                    //        .AddConcurrencyLimiter(100)
-                    //        .AddRetry(new HttpRetryStrategyOptions())
-                    //        .AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions())
-                    //        .AddTimeout(new HttpTimeoutStrategyOptions());
-                    //})));
+                    .AddStandardResilienceHandler())
+                .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet));
 
         // Presentation
         builder.Services

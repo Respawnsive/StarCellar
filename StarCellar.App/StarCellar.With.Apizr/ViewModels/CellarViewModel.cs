@@ -31,13 +31,6 @@ public partial class CellarViewModel : BaseViewModel
 
         try
         {
-            if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                await NavigationService.DisplayAlert("No connectivity!",
-                    $"Please check internet and try again.", "OK");
-                return;
-            }
-
             IsBusy = true;
 
             var wines = await _cellarApiManager.ExecuteAsync(api => api.GetWinesAsync());
@@ -47,6 +40,12 @@ public partial class CellarViewModel : BaseViewModel
 
             foreach(var wine in wines)
                 Wines.Add(wine);
+        }
+        catch (Exception ex) when (ex.InnerException is IOException ioEx)
+        {
+            Debug.WriteLine($"Unable to get Wines: {ioEx.Message}");
+            await NavigationService.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
         }
         catch (Exception ex)
         {
