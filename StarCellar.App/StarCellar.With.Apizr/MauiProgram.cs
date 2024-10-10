@@ -1,9 +1,13 @@
-﻿using System.Reflection;
+﻿using System.Net;
+using System.Reflection;
 using Apizr;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Fallback;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Files;
@@ -53,10 +57,21 @@ public static class MauiProgram
             .AddSingleton(SecureStorage.Default)
             .AddSingleton<INavigationService, NavigationService>();
 
+        // Polly custom pipeline
+        builder.Services.AddResiliencePipeline<string, HttpResponseMessage>("CustomPipeline", pipelineBuilder =>
+        {
+            pipelineBuilder.AddTimeout(TimeSpan.FromSeconds(1));
+        });
+
         // Apizr
         builder.Services.AddApizr(
             registry => registry
                 .AddManagerFor<ICellarApi>()
+                    //options => options
+                    //    .WithRequestOptions(nameof(ICellarApi.GetWinesAsync), 
+                    //        requestOptions => requestOptions
+                    //            .WithResiliencePipelineKeys(["CustomPipeline"]))
+                    //    .WithResiliencePipelineKeys(["CustomPipeline"]))
                 .AddManagerFor<IFileApi>(),
 
             options => options
@@ -65,7 +80,27 @@ public static class MauiProgram
                         .GetRequiredService<IConfiguration>()
                         .GetRequiredSection("AppSettings")
                         .Get<AppSettings>()
-                        .BaseAddress));
+                        .BaseAddress)
+                //.WithResiliencePipelineKeys(["CustomPipeline"])
+                .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
+                    .AddStandardResilienceHandler()));
+                    //.Configure(o =>
+                    //{
+                    //    o.CircuitBreaker.MinimumThroughput = 10;
+                    //})));
+                    //.AddResilienceHandler("myHandler", b =>
+                    //{
+                    //    b.AddFallback(new FallbackStrategyOptions<HttpResponseMessage>()
+                    //        {
+                    //            FallbackAction = _ =>
+                    //                Outcome.FromResultAsValueTask(
+                    //                    new HttpResponseMessage(HttpStatusCode.ServiceUnavailable))
+                    //        })
+                    //        .AddConcurrencyLimiter(100)
+                    //        .AddRetry(new HttpRetryStrategyOptions())
+                    //        .AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions())
+                    //        .AddTimeout(new HttpTimeoutStrategyOptions());
+                    //})));
 
         // Presentation
         builder.Services

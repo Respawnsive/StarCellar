@@ -81,7 +81,8 @@ public static class MauiProgram
             //{
             //    b.AddFallback(new FallbackStrategyOptions<HttpResponseMessage>()
             //        {
-            //            FallbackAction = _ => Outcome.FromResultAsValueTask(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable))
+            //            FallbackAction = _ =>
+            //                Outcome.FromResultAsValueTask(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable))
             //        })
             //        .AddConcurrencyLimiter(100)
             //        .AddRetry(new HttpRetryStrategyOptions())
