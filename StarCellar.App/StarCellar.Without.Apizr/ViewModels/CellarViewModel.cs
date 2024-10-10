@@ -1,4 +1,5 @@
-﻿using StarCellar.Without.Apizr.Services.Apis.Cellar;
+﻿using Refit;
+using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.Without.Apizr.Services.Navigation;
 using StarCellar.Without.Apizr.Views;
@@ -47,6 +48,11 @@ public partial class CellarViewModel : BaseViewModel
             foreach(var wine in wines)
                 Wines.Add(wine);
         }
+        catch (ApiException ex)
+        {
+            Debug.WriteLine($"Unable to get Wines: {ex.Message}");
+            await NavigationService.DisplayAlert($"Error from ex {ex.StatusCode}!", ex.Message, "OK");
+        }
         catch (Exception ex)
         {
             Debug.WriteLine($"Unable to get Wines: {ex.Message}");
@@ -73,6 +79,27 @@ public partial class CellarViewModel : BaseViewModel
     {
         if (wine == null)
             return;
+
+        if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+        {
+            await NavigationService.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK");
+            return;
+        }
+
+        IsBusy = true;
+
+        var wineDetailsResponse = await _cellarApi.GetWineDetailsAsync(wine.Id);
+
+        IsBusy = false;
+
+        if (!wineDetailsResponse.IsSuccessStatusCode)
+        {
+            Debug.WriteLine($"Unable to get wine details: {wineDetailsResponse.Error!.Message}");
+            await NavigationService.DisplayAlert($"Error from rsp {wineDetailsResponse.StatusCode}!", wineDetailsResponse.Error!.Message, "OK");
+
+            return;
+        }
 
         await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
         {
