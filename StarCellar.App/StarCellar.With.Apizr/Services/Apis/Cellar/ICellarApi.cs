@@ -14,7 +14,7 @@ namespace StarCellar.With.Apizr.Services.Apis.Cellar
         Task<IEnumerable<Wine>> GetWinesAsync();
 
         [Get("/{id}")]
-        Task<Wine> GetWineDetailsAsync(Guid id);
+        Task<IApiResponse<Wine>> GetWineDetailsAsync(Guid id);
 
         [Post("/")]
         Task<Wine> CreateWineAsync(Wine item);

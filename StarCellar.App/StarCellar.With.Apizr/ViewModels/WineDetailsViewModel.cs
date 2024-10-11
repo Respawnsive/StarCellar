@@ -52,16 +52,13 @@ public partial class WineDetailsViewModel : BaseViewModel
 
             await NavigationService.GoToAsync("..");
         }
-        catch (Exception ex) when (ex.InnerException is IOException ioEx)
+        catch (ApizrException ex)
         {
-            Debug.WriteLine($"Unable to get Wines: {ioEx.Message}");
-            await NavigationService.DisplayAlert("No connectivity!",
-                $"Please check internet and try again.", "OK");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Unable to delete Wine: {ex.Message}");
-            await NavigationService.DisplayAlert("Error!", ex.Message, "OK");
+            if (!ex.Handled)
+            {
+                Debug.WriteLine($"Unable to delete Wine: {ex.Message}");
+                await NavigationService.DisplayAlert("Error!", ex.Message, "OK"); 
+            }
         }
         finally
         {

@@ -41,16 +41,13 @@ public partial class CellarViewModel : BaseViewModel
             foreach(var wine in wines)
                 Wines.Add(wine);
         }
-        catch (Exception ex) when (ex.InnerException is IOException ioEx)
+        catch (ApizrException ex)
         {
-            Debug.WriteLine($"Unable to get Wines: {ioEx.Message}");
-            await NavigationService.DisplayAlert("No connectivity!",
-                $"Please check internet and try again.", "OK");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Unable to get Wines: {ex.Message}");
-            await NavigationService.DisplayAlert("Error!", ex.Message, "OK");
+            if (!ex.Handled)
+            {
+                Debug.WriteLine($"Unable to get Wines: {ex.Message}");
+                await NavigationService.DisplayAlert("Error!", ex.Message, "OK"); 
+            }
         }
         finally
         {
@@ -73,6 +70,23 @@ public partial class CellarViewModel : BaseViewModel
     {
         if (wine == null)
             return;
+
+        IsBusy = true;
+
+        var wineDetailsResponse = await _cellarApiManager.ExecuteAsync(api => api.GetWineDetailsAsync(wine.Id));
+
+        IsBusy = false;
+
+        if (!wineDetailsResponse.IsSuccess)
+        {
+            if (!wineDetailsResponse.Exception.Handled)
+            {
+                Debug.WriteLine($"Unable to get wine details: {wineDetailsResponse.Exception!.Message}");
+                await NavigationService.DisplayAlert($"Error from rsp {wineDetailsResponse.ApiResponse.StatusCode}!", wineDetailsResponse.Exception!.Message, "OK"); 
+            }
+
+            return;
+        }
 
         await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
         {

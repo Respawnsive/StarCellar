@@ -78,7 +78,8 @@ public static class MauiProgram
                         .BaseAddress)
                 .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
                     .AddStandardResilienceHandler())
-                .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet));
+                .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet)
+                .WithExCatching(OnException));
 
         // Presentation
         builder.Services
@@ -91,4 +92,17 @@ public static class MauiProgram
 
         return builder.Build();
 	}
+
+    private static bool OnException(ApizrException ex)
+    {
+        if (ex.InnerException is IOException ioEx)
+        {
+            Debug.WriteLine($"Error: {ioEx.Message}");
+            Shell.Current.DisplayAlert("No connectivity!",
+                $"Please check internet and try again.", "OK"); 
+            return true;
+        }
+
+        return false;
+    }
 }
