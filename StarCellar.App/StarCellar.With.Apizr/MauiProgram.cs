@@ -93,14 +93,14 @@ public static class MauiProgram
         return builder.Build();
 	}
 
-    private static bool OnException(ApizrException ex)
+    private static async Task<bool> OnException(IServiceProvider serviceProvider, ApizrException ex)
     {
+        var navigationService = serviceProvider.GetRequiredService<INavigationService>();
         if (ex.InnerException is IOException ioEx)
         {
             Debug.WriteLine($"Error: {ioEx.Message}");
-            Shell.Current.DisplayAlert("No connectivity!",
-                $"Please check internet and try again.", "OK"); 
-            return true;
+            await navigationService.DisplayAlert("No connectivity!", $"Please check internet and try again.", "OK"); 
+            return true; // Handled
         }
 
         return false;
