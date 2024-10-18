@@ -9,13 +9,13 @@ namespace StarCellar.Without.Apizr.Services.Apis.Cellar
         Task<IList<WineDTO>> GetWinesAsync(CancellationToken ct);
 
         [Get("/wines/{id}")]
-        Task<IApiResponse<Wine>> GetWineDetailsAsync(Guid id);
+        Task<IApiResponse<WineDTO>> GetWineDetailsAsync(Guid id);
 
         [Post("/wines")]
-        Task<Wine> CreateWineAsync(Wine item);
+        Task<WineDTO> CreateWineAsync(WineDTO item);
         
         [Put("/wines/{id}")]
-        Task UpdateWineAsync(Guid id, Wine item);
+        Task UpdateWineAsync(Guid id, WineDTO item);
         
         [Delete("/wines/{id}")]
         Task DeleteWineAsync(Guid id);

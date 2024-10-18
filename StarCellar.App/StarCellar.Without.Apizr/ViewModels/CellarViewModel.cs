@@ -115,7 +115,7 @@ public partial class CellarViewModel : BaseViewModel
             return;
 
         // FetchOrGet behavior
-        IApiResponse<Wine> wineDetailsResponse = null;
+        IApiResponse<WineDTO> wineDetailsResponse = null;
 
         if (_connectivity.NetworkAccess == NetworkAccess.Internet)
         {

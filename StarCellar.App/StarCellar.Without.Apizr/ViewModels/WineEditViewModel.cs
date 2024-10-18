@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using AutoMapper;
+using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.Without.Apizr.Services.Apis.Files;
@@ -13,17 +14,20 @@ public partial class WineEditViewModel : BaseViewModel
     private readonly IConnectivity _connectivity;
     private readonly IFilePicker _filePicker;
     private readonly IFileApi _fileApi;
+    private readonly IMapper _mapper;
 
     public WineEditViewModel(INavigationService navigationService, 
         ICellarApi cellarApi,
         IConnectivity connectivity,
         IFilePicker filePicker, 
-        IFileApi fileApi) : base(navigationService)
+        IFileApi fileApi, 
+        IMapper mapper) : base(navigationService)
     {
         _cellarApi = cellarApi;
         _connectivity = connectivity;
         _filePicker = filePicker;
         _fileApi = fileApi;
+        _mapper = mapper;
     }
 
     [ObservableProperty] private Wine _wine;
@@ -96,10 +100,14 @@ public partial class WineEditViewModel : BaseViewModel
 
             IsBusy = true;
 
-            if (Wine.Id == Guid.Empty)
-                Wine = await _cellarApi.CreateWineAsync(Wine);
+            var wineDto = _mapper.Map<WineDTO>(Wine);
+            if (wineDto.Id == Guid.Empty)
+            {
+                wineDto = await _cellarApi.CreateWineAsync(wineDto);
+                Wine = _mapper.Map<Wine>(wineDto);
+            }
             else
-                await _cellarApi.UpdateWineAsync(Wine.Id, Wine);
+                await _cellarApi.UpdateWineAsync(wineDto.Id, wineDto);
 
             await NavigationService.GoToAsync("..");
         }

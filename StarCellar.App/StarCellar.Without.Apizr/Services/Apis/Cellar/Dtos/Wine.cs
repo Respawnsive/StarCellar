@@ -23,6 +23,8 @@ namespace StarCellar.Without.Apizr.Services.Apis.Cellar.Dtos
         {
             CreateMap<WineDTO, Wine>()
                 .ForMember(dest => dest.ViewCount, opt => opt.Ignore());
+
+            CreateMap<Wine, WineDTO>();
         }
     }
 }
