@@ -33,7 +33,11 @@ public partial class CellarViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            var wines = await _cellarApiManager.ExecuteAsync(api => api.GetWinesAsync());
+            var cts = new CancellationTokenSource();
+            //cts.CancelAfter(1000); // For cancellation demo only
+
+            var wines = await _cellarApiManager.ExecuteAsync((opt, api) => api.GetWinesAsync(opt), 
+                options => options.WithCancellation(cts.Token));
 
             if(Wines.Count != 0)
                 Wines.Clear();

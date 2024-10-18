@@ -96,13 +96,21 @@ public static class MauiProgram
     private static async Task<bool> OnException(IServiceProvider serviceProvider, ApizrException ex)
     {
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-        if (ex.InnerException is IOException ioEx)
+        switch (ex.InnerException)
         {
-            Debug.WriteLine($"Error: {ioEx.Message}");
-            await navigationService.DisplayAlert("No connectivity!", $"Please check internet and try again.", "OK"); 
-            return true; // Handled
+            case IOException innerEx:
+            {
+                Debug.WriteLine($"Error: {innerEx.Message}");
+                await navigationService.DisplayAlert("No connectivity!", $"Please check internet and try again.", "OK"); 
+                return true; // Handled
+            }
+            case OperationCanceledException:
+            {
+                Debug.WriteLine($"Operation cancelled");
+                return true; // Handled
+            }
+            default:
+                return false;
         }
-
-        return false;
     }
 }

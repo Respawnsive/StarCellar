@@ -40,13 +40,21 @@ public partial class CellarViewModel : BaseViewModel
 
             IsBusy = true;
 
-            var wines = await _cellarApi.GetWinesAsync();
+            var cts = new CancellationTokenSource();
+            //cts.CancelAfter(1000); // For cancellation demo only
+
+            var wines = await _cellarApi.GetWinesAsync(cts.Token);
 
             if(Wines.Count != 0)
                 Wines.Clear();
 
             foreach(var wine in wines)
                 Wines.Add(wine);
+        }
+        catch (OperationCanceledException ex)
+        {
+            // Does not work yet for Android: https://github.com/dotnet/android/issues/5761
+            Debug.WriteLine($"Get Wines cancelled: {ex.Message}");
         }
         catch (ApiException ex)
         {

@@ -9,7 +9,8 @@ namespace StarCellar.Api.Handlers
     internal static class WinesHandler
     {
         internal static async Task<IResult> GetAllWines(AppDbContext appContext,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            CancellationToken ct = default)
         {
             //if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
             //    return TypedResults.BadRequest(errMsg);
@@ -18,7 +19,7 @@ namespace StarCellar.Api.Handlers
                 .Wines
                 //.Where(wine => wine.OwnerId == user.Id)
                 .Select(wine => new WineDTO(wine.Id, wine.Name, wine.Description, wine.ImageUrl, wine.Stock,
-                    wine.Score, wine.OwnerId)).ToArrayAsync());
+                    wine.Score, wine.OwnerId)).ToArrayAsync(ct));
         }
 
         internal static async Task<IResult> GetWine(Guid id, AppDbContext appContext,
