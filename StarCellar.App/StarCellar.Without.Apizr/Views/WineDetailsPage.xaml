@@ -4,9 +4,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:AlohaKit.Controls;assembly=AlohaKit"
+    xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModels="clr-namespace:StarCellar.Without.Apizr.ViewModels"
     Title="{Binding Wine.Name}"
     x:DataType="viewModels:WineDetailsViewModel">
+    <ContentPage.Behaviors>
+        <mct:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
+    </ContentPage.Behaviors>
 
     <Grid RowDefinitions="*,Auto" RowSpacing="0">
         <ScrollView Grid.Row="0">
@@ -44,7 +48,7 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="20,20,0,0" />
                     </Border.StrokeShape>
-                    <Grid RowDefinitions="Auto,Auto,Auto,*">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
                         <Label
                             Grid.Row="0"
                             Margin="0,0,0,8"
@@ -65,8 +69,15 @@
                             IsReadOnly="True"
                             Value="{Binding Wine.Score}" />
 
-                        <Grid
+                        <Label
                             Grid.Row="3"
+                            Margin="0,0,0,8"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Text="{Binding Wine.ViewCount}" />
+
+                        <Grid
+                            Grid.Row="4"
                             ColumnDefinitions="*,*"
                             VerticalOptions="End">
 

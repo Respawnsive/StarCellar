@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Cellar.Dtos;
@@ -12,15 +13,17 @@ public partial class CellarViewModel : BaseViewModel
     private readonly ICellarApi _cellarApi;
     private readonly IConnectivity _connectivity;
     private readonly IMemoryCache _cache;
+    private readonly IMapper _mapper;
 
     public CellarViewModel(INavigationService navigationService, 
         ICellarApi cellarApi, 
         IConnectivity connectivity, 
-        IMemoryCache cache) : base(navigationService)
+        IMemoryCache cache, IMapper mapper) : base(navigationService)
     {
         _cellarApi = cellarApi;
         _connectivity = connectivity;
         _cache = cache;
+        _mapper = mapper;
     }
 
     public ObservableCollection<Wine> Wines { get; } = new();
@@ -57,7 +60,10 @@ public partial class CellarViewModel : BaseViewModel
                 var cts = new CancellationTokenSource();
                 //cts.CancelAfter(1000); // For cancellation demo only
 
-                wines = await _cellarApi.GetWinesAsync(cts.Token);
+                var winesDto = await _cellarApi.GetWinesAsync(cts.Token);
+
+                // Mapping
+                wines = _mapper.Map<IList<Wine>>(winesDto);
 
                 // Update cache
                 _cache.Set("GetWinesAsync", wines, new MemoryCacheEntryOptions

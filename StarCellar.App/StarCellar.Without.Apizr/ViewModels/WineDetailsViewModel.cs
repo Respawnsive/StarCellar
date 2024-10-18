@@ -67,6 +67,11 @@ public partial class WineDetailsViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+    }
 
+    [RelayCommand]
+    private void OnAppearing()
+    {
+        Wine.ViewCount++;
     }
 }

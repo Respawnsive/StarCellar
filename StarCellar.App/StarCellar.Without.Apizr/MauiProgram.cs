@@ -106,6 +106,9 @@ public static class MauiProgram
         // Register the in-memory cache
         builder.Services.AddMemoryCache();
 
+        // AutoMapper
+        builder.Services.AddAutoMapper(assembly);
+
         // Presentation
         builder.Services
             .AddSingleton<CellarViewModel>()
