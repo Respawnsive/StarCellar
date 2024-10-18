@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.Without.Apizr.Services.Navigation;
@@ -10,13 +11,16 @@ public partial class CellarViewModel : BaseViewModel
 {
     private readonly ICellarApi _cellarApi;
     private readonly IConnectivity _connectivity;
+    private readonly IMemoryCache _cache;
 
     public CellarViewModel(INavigationService navigationService, 
         ICellarApi cellarApi, 
-        IConnectivity connectivity) : base(navigationService)
+        IConnectivity connectivity, 
+        IMemoryCache cache) : base(navigationService)
     {
         _cellarApi = cellarApi;
         _connectivity = connectivity;
+        _cache = cache;
     }
 
     public ObservableCollection<Wine> Wines { get; } = new();
@@ -31,22 +35,38 @@ public partial class CellarViewModel : BaseViewModel
 
         try
         {
-            if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                await NavigationService.DisplayAlert("No connectivity!",
-                    $"Please check internet and try again.", "OK");
-                return;
-            }
-
-            IsBusy = true;
-
-            var cts = new CancellationTokenSource();
-            //cts.CancelAfter(1000); // For cancellation demo only
-
-            var wines = await _cellarApi.GetWinesAsync(cts.Token);
-
-            if(Wines.Count != 0)
+            if (Wines.Count != 0)
                 Wines.Clear();
+
+            // GetOrFetch behavior
+            if (_cache.TryGetValue("GetWinesAsync", out IList<Wine> wines))
+            {
+                await NavigationService.ShowToast("Data loaded from local cache");
+            }
+            else
+            {
+                if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+                {
+                    await NavigationService.DisplayAlert("No connectivity!",
+                        $"Please check internet and try again.", "OK");
+                    return;
+                }
+
+                IsBusy = true;
+
+                var cts = new CancellationTokenSource();
+                //cts.CancelAfter(1000); // For cancellation demo only
+
+                wines = await _cellarApi.GetWinesAsync(cts.Token);
+
+                // Update cache
+                _cache.Set("GetWinesAsync", wines, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10) // Set cache expiration
+                });
+
+                await NavigationService.ShowToast("Data fetched from remote api");
+            }
 
             foreach(var wine in wines)
                 Wines.Add(wine);
@@ -88,31 +108,53 @@ public partial class CellarViewModel : BaseViewModel
         if (wine == null)
             return;
 
-        if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+        // FetchOrGet behavior
+        IApiResponse<Wine> wineDetailsResponse = null;
+
+        if (_connectivity.NetworkAccess == NetworkAccess.Internet)
         {
-            await NavigationService.DisplayAlert("No connectivity!",
-                $"Please check internet and try again.", "OK");
-            return;
+            IsBusy = true;
+
+            wineDetailsResponse = await _cellarApi.GetWineDetailsAsync(wine.Id);
+
+            IsBusy = false;
         }
 
-        IsBusy = true;
 
-        var wineDetailsResponse = await _cellarApi.GetWineDetailsAsync(wine.Id);
-
-        IsBusy = false;
-
-        if (!wineDetailsResponse.IsSuccessStatusCode)
+        if (wineDetailsResponse?.IsSuccessStatusCode == true)
         {
-            Debug.WriteLine($"Unable to get wine details: {wineDetailsResponse.Error!.Message}");
-            await NavigationService.DisplayAlert($"Error from rsp {wineDetailsResponse.StatusCode}!", wineDetailsResponse.Error!.Message, "OK");
+            // Update cache
+            _cache.Set("GetWineDetailsAsync", wineDetailsResponse.Content, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10) // Set cache expiration
+            });
 
-            return;
+            await NavigationService.ShowToast("Data fetched from remote api");
+
+            await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
+            {
+                {nameof(Wine), wine}
+            });
         }
-
-        await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
+        else
         {
-            {nameof(Wine), wine }
-        });
+            Debug.WriteLine($"Unable to fetch wine details: {wineDetailsResponse?.Error!.Message ?? "no network"}");
+
+            if (_cache.TryGetValue("GetWineDetailsAsync", out Wine wineDetails))
+            {
+                await NavigationService.ShowToast("Data loaded from local cache");
+
+                await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
+                {
+                    {nameof(Wine), wine}
+                });
+            }
+            else
+            {
+                await NavigationService.DisplayAlert($"Error: {wineDetailsResponse?.StatusCode.ToString() ?? "network"} with no cached data!",
+                    wineDetailsResponse?.Error!.Message ?? "no network", "OK"); 
+            }
+        }
     }
 
     [RelayCommand]

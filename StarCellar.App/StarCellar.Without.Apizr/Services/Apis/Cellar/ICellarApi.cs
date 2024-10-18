@@ -6,7 +6,7 @@ namespace StarCellar.Without.Apizr.Services.Apis.Cellar
     public interface ICellarApi
     {
         [Get("/wines")]
-        Task<IEnumerable<Wine>> GetWinesAsync(CancellationToken ct);
+        Task<IList<Wine>> GetWinesAsync(CancellationToken ct);
 
         [Get("/wines/{id}")]
         Task<IApiResponse<Wine>> GetWineDetailsAsync(Guid id);

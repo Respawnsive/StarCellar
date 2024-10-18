@@ -103,6 +103,9 @@ public static class MauiProgram
                 .Get<AppSettings>()
                 .BaseAddress));
 
+        // Register the in-memory cache
+        builder.Services.AddMemoryCache();
+
         // Presentation
         builder.Services
             .AddSingleton<CellarViewModel>()
