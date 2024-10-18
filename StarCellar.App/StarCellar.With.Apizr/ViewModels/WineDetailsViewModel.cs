@@ -48,7 +48,7 @@ public partial class WineDetailsViewModel : BaseViewModel
 
             IsBusy = true;
 
-            await _cellarApiManager.ExecuteAsync(api => api.DeleteWineAsync(Wine.Id));
+            await _cellarApiManager.ExecuteAsync((opt, api) => api.DeleteWineAsync(Wine.Id, opt));
 
             await NavigationService.GoToAsync("..");
         }
@@ -65,5 +65,11 @@ public partial class WineDetailsViewModel : BaseViewModel
             IsBusy = false;
         }
 
+    }
+
+    [RelayCommand]
+    private void OnAppearing()
+    {
+        Wine.ViewCount++;
     }
 }

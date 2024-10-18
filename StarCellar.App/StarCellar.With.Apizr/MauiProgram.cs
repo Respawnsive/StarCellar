@@ -80,10 +80,14 @@ public static class MauiProgram
                     .AddStandardResilienceHandler())
                 .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet)
                 .WithExCatching(OnException)
-                .WithInMemoryCacheHandler());
+                .WithInMemoryCacheHandler()
+                .WithAutoMapperMappingHandler());
 
         // Register the in-memory cache
         builder.Services.AddMemoryCache();
+
+        // AutoMapper
+        builder.Services.AddAutoMapper(assembly);
 
         // Presentation
         builder.Services

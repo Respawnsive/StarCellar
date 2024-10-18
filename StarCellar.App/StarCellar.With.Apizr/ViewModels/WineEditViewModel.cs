@@ -87,9 +87,9 @@ public partial class WineEditViewModel : BaseViewModel
             IsBusy = true;
 
             if (Wine.Id == Guid.Empty)
-                Wine = await _cellarApiManager.ExecuteAsync(api => api.CreateWineAsync(Wine));
+                Wine = await _cellarApiManager.ExecuteAsync<Wine, WineDTO>((opt, api, wineDto) => api.CreateWineAsync(wineDto, opt), Wine);
             else
-                await _cellarApiManager.ExecuteAsync(api => api.UpdateWineAsync(Wine.Id, Wine));
+                await _cellarApiManager.ExecuteAsync<Wine, WineDTO>((opt, api, wineDto) => api.UpdateWineAsync(wineDto.Id, wineDto, opt), Wine);
 
             await NavigationService.GoToAsync("..");
         }

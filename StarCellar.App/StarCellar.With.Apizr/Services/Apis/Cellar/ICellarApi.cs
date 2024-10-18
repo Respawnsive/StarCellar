@@ -14,18 +14,18 @@ namespace StarCellar.With.Apizr.Services.Apis.Cellar
     public interface ICellarApi
     {
         [Get("/"), ResiliencePipeline("CustomPipeline"), Cache(CacheMode.GetOrFetch, "00:00:10")]
-        Task<IList<Wine>> GetWinesAsync([RequestOptions] IApizrRequestOptions options);
+        Task<IList<WineDTO>> GetWinesAsync([RequestOptions] IApizrRequestOptions options);
 
         [Get("/{id}"), Cache(CacheMode.FetchOrGet, "00:00:10")]
-        Task<IApiResponse<Wine>> GetWineDetailsAsync(Guid id);
+        Task<IApiResponse<WineDTO>> GetWineDetailsAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
 
         [Post("/")]
-        Task<Wine> CreateWineAsync(Wine item);
+        Task<WineDTO> CreateWineAsync(WineDTO item, [RequestOptions] IApizrRequestOptions options);
         
         [Put("/{id}")]
-        Task UpdateWineAsync(Guid id, Wine item);
+        Task UpdateWineAsync(Guid id, WineDTO item, [RequestOptions] IApizrRequestOptions options);
         
         [Delete("/{id}")]
-        Task DeleteWineAsync(Guid id);
+        Task DeleteWineAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
     }
 }

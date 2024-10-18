@@ -39,7 +39,7 @@ public partial class CellarViewModel : BaseViewModel
             var cts = new CancellationTokenSource();
             //cts.CancelAfter(1000); // For cancellation demo only
 
-            var wines = await _cellarApiManager.ExecuteAsync((opt, api) => api.GetWinesAsync(opt), 
+            var wines = await _cellarApiManager.ExecuteAsync<IList<Wine>, IList<WineDTO>>((opt, api) => api.GetWinesAsync(opt), 
                 options => options.WithCancellation(cts.Token));
             
             foreach(var wine in wines)
@@ -77,7 +77,7 @@ public partial class CellarViewModel : BaseViewModel
 
         IsBusy = true;
 
-        var wineDetailsResponse = await _cellarApiManager.ExecuteAsync(api => api.GetWineDetailsAsync(wine.Id));
+        var wineDetailsResponse = await _cellarApiManager.ExecuteAsync((opt, api) => api.GetWineDetailsAsync(wine.Id, opt));
 
         IsBusy = false;
 
