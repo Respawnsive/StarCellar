@@ -79,7 +79,11 @@ public static class MauiProgram
                 .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
                     .AddStandardResilienceHandler())
                 .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet)
-                .WithExCatching(OnException));
+                .WithExCatching(OnException)
+                .WithInMemoryCacheHandler());
+
+        // Register the in-memory cache
+        builder.Services.AddMemoryCache();
 
         // Presentation
         builder.Services

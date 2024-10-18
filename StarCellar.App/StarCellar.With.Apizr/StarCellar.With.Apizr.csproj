@@ -53,9 +53,11 @@
 
 	<ItemGroup>
 	  <PackageReference Include="AlohaKit" Version="1.0.100" />
+	  <PackageReference Include="Apizr.Extensions.Microsoft.Caching" Version="6.3.0" />
 	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="6.3.0" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.10" />
