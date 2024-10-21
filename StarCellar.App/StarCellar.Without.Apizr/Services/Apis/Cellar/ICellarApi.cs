@@ -20,4 +20,12 @@ namespace StarCellar.Without.Apizr.Services.Apis.Cellar
         [Delete("/wines/{id}")]
         Task DeleteWineAsync(Guid id);
     }
+
+    public interface ICellarUserInitiatedApi : ICellarApi
+    {
+    }
+
+    public interface ICellarSpeculativeApi : ICellarApi
+    {
+    }
 }

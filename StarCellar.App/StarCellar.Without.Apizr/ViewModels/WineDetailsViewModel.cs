@@ -8,14 +8,14 @@ namespace StarCellar.Without.Apizr.ViewModels;
 [QueryProperty(nameof(StarCellar.Without.Apizr.ViewModels.WineDetailsViewModel.Wine), nameof(StarCellar.Without.Apizr.ViewModels.WineDetailsViewModel.Wine))]
 public partial class WineDetailsViewModel : BaseViewModel
 {
-    private readonly ICellarApi _cellarApi;
+    private readonly ICellarUserInitiatedApi _cellarUserInitiatedApi;
     private readonly IConnectivity _connectivity;
 
-    public WineDetailsViewModel(INavigationService navigationService, 
-        ICellarApi cellarApi, 
+    public WineDetailsViewModel(INavigationService navigationService,
+        ICellarUserInitiatedApi cellarUserInitiatedApi, 
         IConnectivity connectivity) : base(navigationService)
     {
-        _cellarApi = cellarApi;
+        _cellarUserInitiatedApi = cellarUserInitiatedApi;
         _connectivity = connectivity;
     }
 
@@ -54,7 +54,7 @@ public partial class WineDetailsViewModel : BaseViewModel
 
             IsBusy = true;
 
-            await _cellarApi.DeleteWineAsync(Wine.Id);
+            await _cellarUserInitiatedApi.DeleteWineAsync(Wine.Id);
 
             await NavigationService.GoToAsync("..");
         }

@@ -1,12 +1,14 @@
 ﻿using System.Net;
 using System.Reflection;
 using CommunityToolkit.Maui;
+using Fusillade;
 using HttpTracer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.ApplicationModel;
 using Polly;
 using Polly.Fallback;
 using Polly.Registry;
@@ -60,12 +62,12 @@ public static class MauiProgram
             .AddSingleton<INavigationService, NavigationService>();
 
         // Refit
-        builder.Services.AddRefitClient<ICellarApi>(new RefitSettings
+        builder.Services.AddRefitClient<ICellarUserInitiatedApi>(new RefitSettings
             {
-                HttpMessageHandlerFactory = () => new HttpTracerHandler
-                {
-                    Verbosity = HttpMessageParts.All
-                }
+                HttpMessageHandlerFactory = () =>
+                    new HttpTracerHandler(
+                        new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.UserInitiated),
+                        HttpMessageParts.All)
             })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
@@ -73,29 +75,27 @@ public static class MauiProgram
                 .Get<AppSettings>()
                 .BaseAddress))
             .AddStandardResilienceHandler();
-            //.Configure(o =>
-            //{
-            //    o.CircuitBreaker.MinimumThroughput = 10;
-            //})
-            //.AddResilienceHandler("myHandler", b =>
-            //{
-            //    b.AddFallback(new FallbackStrategyOptions<HttpResponseMessage>()
-            //        {
-            //            FallbackAction = _ =>
-            //                Outcome.FromResultAsValueTask(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable))
-            //        })
-            //        .AddConcurrencyLimiter(100)
-            //        .AddRetry(new HttpRetryStrategyOptions())
-            //        .AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions())
-            //        .AddTimeout(new HttpTimeoutStrategyOptions());
-            //});
 
-        builder.Services.AddRefitClient<IFileApi>(new RefitSettings
+        builder.Services.AddRefitClient<ICellarSpeculativeApi>(new RefitSettings
             {
-                HttpMessageHandlerFactory = () => new HttpTracerHandler
-                {
-                    Verbosity = HttpMessageParts.All
-                }
+                HttpMessageHandlerFactory = () =>
+                    new HttpTracerHandler(
+                        new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.Speculative),
+                        HttpMessageParts.All)
+            })
+            .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
+                .GetRequiredService<IConfiguration>()
+                .GetRequiredSection("AppSettings")
+                .Get<AppSettings>()
+                .BaseAddress))
+            .AddStandardResilienceHandler();
+
+        builder.Services.AddRefitClient<IFileBackgroundApi>(new RefitSettings
+            {
+                HttpMessageHandlerFactory = () =>
+                    new HttpTracerHandler(
+                        new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.Background),
+                        HttpMessageParts.RequestHeaders)
             })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()

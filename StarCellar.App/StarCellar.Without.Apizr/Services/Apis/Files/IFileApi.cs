@@ -8,4 +8,8 @@ namespace StarCellar.Without.Apizr.Services.Apis.Files
         [Post("/upload")]
         Task<string> UploadAsync([AliasAs("file")] StreamPart stream);
     }
+
+    public interface IFileBackgroundApi : IFileApi
+    {
+    }
 }

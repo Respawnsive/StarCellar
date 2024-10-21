@@ -10,23 +10,23 @@ namespace StarCellar.Without.Apizr.ViewModels;
 [QueryProperty(nameof(Wine), nameof(Wine))]
 public partial class WineEditViewModel : BaseViewModel
 {
-    private readonly ICellarApi _cellarApi;
+    private readonly ICellarUserInitiatedApi _cellarUserInitiatedApi;
     private readonly IConnectivity _connectivity;
     private readonly IFilePicker _filePicker;
-    private readonly IFileApi _fileApi;
+    private readonly IFileBackgroundApi _fileBackgroundApi;
     private readonly IMapper _mapper;
 
-    public WineEditViewModel(INavigationService navigationService, 
-        ICellarApi cellarApi,
+    public WineEditViewModel(INavigationService navigationService,
+        ICellarUserInitiatedApi cellarUserInitiatedApi,
         IConnectivity connectivity,
-        IFilePicker filePicker, 
-        IFileApi fileApi, 
+        IFilePicker filePicker,
+        IFileBackgroundApi fileBackgroundApi, 
         IMapper mapper) : base(navigationService)
     {
-        _cellarApi = cellarApi;
+        _cellarUserInitiatedApi = cellarUserInitiatedApi;
         _connectivity = connectivity;
         _filePicker = filePicker;
-        _fileApi = fileApi;
+        _fileBackgroundApi = fileBackgroundApi;
         _mapper = mapper;
     }
 
@@ -35,9 +35,6 @@ public partial class WineEditViewModel : BaseViewModel
     [RelayCommand]
     private async Task SetImageAsync()
     {
-        if (IsBusy)
-            return;
-
         try
         {
             var result = await _filePicker.PickAsync();
@@ -58,21 +55,16 @@ public partial class WineEditViewModel : BaseViewModel
                     return;
                 }
 
-                IsBusy = true;
-
+                // Upload in background as we don't want to block the UI
                 await using var stream = await result.OpenReadAsync();
                 var streamPart = new StreamPart(stream, result.FileName);
-                Wine.ImageUrl = await _fileApi.UploadAsync(streamPart);
+                Wine.ImageUrl = await _fileBackgroundApi.UploadAsync(streamPart);
             }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Unable to set an image: {ex.Message}");
             await NavigationService.DisplayAlert("Error!", ex.Message, "OK");
-        }
-        finally
-        {
-            IsBusy = false;
         }
     }
 
@@ -103,11 +95,11 @@ public partial class WineEditViewModel : BaseViewModel
             var wineDto = _mapper.Map<WineDTO>(Wine);
             if (wineDto.Id == Guid.Empty)
             {
-                wineDto = await _cellarApi.CreateWineAsync(wineDto);
+                wineDto = await _cellarUserInitiatedApi.CreateWineAsync(wineDto);
                 Wine = _mapper.Map<Wine>(wineDto);
             }
             else
-                await _cellarApi.UpdateWineAsync(wineDto.Id, wineDto);
+                await _cellarUserInitiatedApi.UpdateWineAsync(wineDto.Id, wineDto);
 
             await NavigationService.GoToAsync("..");
         }

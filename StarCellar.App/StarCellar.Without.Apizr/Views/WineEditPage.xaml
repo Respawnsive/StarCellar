@@ -27,6 +27,7 @@
                 <Border
                     Grid.Row="0"
                     Margin="0,80"
+                    BackgroundColor="#CCFFFFFF"
                     HeightRequest="160"
                     HorizontalOptions="Center"
                     Stroke="White"

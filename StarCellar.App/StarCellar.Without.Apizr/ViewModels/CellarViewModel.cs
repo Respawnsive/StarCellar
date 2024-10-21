@@ -10,17 +10,22 @@ namespace StarCellar.Without.Apizr.ViewModels;
 
 public partial class CellarViewModel : BaseViewModel
 {
-    private readonly ICellarApi _cellarApi;
+    private readonly ICellarUserInitiatedApi _cellarUserInitiatedApi;
+    private readonly ICellarSpeculativeApi _cellarSpeculativeApi;
     private readonly IConnectivity _connectivity;
     private readonly IMemoryCache _cache;
     private readonly IMapper _mapper;
+    private IApiResponse<WineDTO> _wineDetailsResponse;
 
     public CellarViewModel(INavigationService navigationService, 
-        ICellarApi cellarApi, 
+        ICellarUserInitiatedApi cellarUserInitiatedApi,
+        ICellarSpeculativeApi cellarSpeculativeApi,
         IConnectivity connectivity, 
-        IMemoryCache cache, IMapper mapper) : base(navigationService)
+        IMemoryCache cache, 
+        IMapper mapper) : base(navigationService)
     {
-        _cellarApi = cellarApi;
+        _cellarUserInitiatedApi = cellarUserInitiatedApi;
+        _cellarSpeculativeApi = cellarSpeculativeApi;
         _connectivity = connectivity;
         _cache = cache;
         _mapper = mapper;
@@ -60,7 +65,7 @@ public partial class CellarViewModel : BaseViewModel
                 var cts = new CancellationTokenSource();
                 //cts.CancelAfter(1000); // For cancellation demo only
 
-                var winesDto = await _cellarApi.GetWinesAsync(cts.Token);
+                var winesDto = await _cellarUserInitiatedApi.GetWinesAsync(cts.Token);
 
                 // Mapping
                 wines = _mapper.Map<IList<Wine>>(winesDto);
@@ -72,6 +77,13 @@ public partial class CellarViewModel : BaseViewModel
                 });
 
                 await NavigationService.ShowToast("Data fetched from remote api");
+
+                // Now fetch details form first wine to anticipate user selection
+                IsBusy = false; // We don't want to block UI for speculative fetching
+
+                var firstWine = wines.FirstOrDefault();
+                if(firstWine != null)
+                    _wineDetailsResponse = await _cellarSpeculativeApi.GetWineDetailsAsync(firstWine.Id);
             }
 
             foreach(var wine in wines)
@@ -115,22 +127,20 @@ public partial class CellarViewModel : BaseViewModel
             return;
 
         // FetchOrGet behavior
-        IApiResponse<WineDTO> wineDetailsResponse = null;
-
-        if (_connectivity.NetworkAccess == NetworkAccess.Internet)
+        if ((_wineDetailsResponse?.IsSuccessStatusCode != true || _wineDetailsResponse.Content?.Id != wine.Id) && _connectivity.NetworkAccess == NetworkAccess.Internet)
         {
             IsBusy = true;
 
-            wineDetailsResponse = await _cellarApi.GetWineDetailsAsync(wine.Id);
+            _wineDetailsResponse = await _cellarUserInitiatedApi.GetWineDetailsAsync(wine.Id);
 
             IsBusy = false;
         }
 
 
-        if (wineDetailsResponse?.IsSuccessStatusCode == true)
+        if (_wineDetailsResponse?.IsSuccessStatusCode == true)
         {
             // Update cache
-            _cache.Set("GetWineDetailsAsync", wineDetailsResponse.Content, new MemoryCacheEntryOptions
+            _cache.Set("GetWineDetailsAsync", _wineDetailsResponse.Content, new MemoryCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10) // Set cache expiration
             });
@@ -144,7 +154,7 @@ public partial class CellarViewModel : BaseViewModel
         }
         else
         {
-            Debug.WriteLine($"Unable to fetch wine details: {wineDetailsResponse?.Error!.Message ?? "no network"}");
+            Debug.WriteLine($"Unable to fetch wine details: {_wineDetailsResponse?.Error!.Message ?? "no network"}");
 
             if (_cache.TryGetValue("GetWineDetailsAsync", out Wine wineDetails))
             {
@@ -157,8 +167,8 @@ public partial class CellarViewModel : BaseViewModel
             }
             else
             {
-                await NavigationService.DisplayAlert($"Error: {wineDetailsResponse?.StatusCode.ToString() ?? "network"} with no cached data!",
-                    wineDetailsResponse?.Error!.Message ?? "no network", "OK"); 
+                await NavigationService.DisplayAlert($"Error: {_wineDetailsResponse?.StatusCode.ToString() ?? "network"} with no cached data!",
+                    _wineDetailsResponse?.Error!.Message ?? "no network", "OK"); 
             }
         }
     }
