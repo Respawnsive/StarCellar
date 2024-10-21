@@ -1,5 +1,6 @@
 ﻿using Apizr;
 using Apizr.Configuring;
+using Fusillade;
 using Refit;
 
 namespace StarCellar.With.Apizr.Services.Apis.Files
@@ -8,6 +9,7 @@ namespace StarCellar.With.Apizr.Services.Apis.Files
     {
         [Multipart]
         [Post("/upload")]
+        [Priority(Priority.Background)]
         Task<string> UploadAsync([AliasAs("file")] StreamPart stream);
     }
 }

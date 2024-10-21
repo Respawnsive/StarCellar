@@ -81,7 +81,8 @@ public static class MauiProgram
                 .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet)
                 .WithExCatching(OnException)
                 .WithInMemoryCacheHandler()
-                .WithAutoMapperMappingHandler());
+                .WithAutoMapperMappingHandler()
+                .WithPriority());
 
         // Register the in-memory cache
         builder.Services.AddMemoryCache();

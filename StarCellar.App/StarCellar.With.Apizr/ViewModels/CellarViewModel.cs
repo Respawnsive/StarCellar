@@ -1,4 +1,6 @@
 ﻿using Apizr;
+using Apizr.Caching;
+using Fusillade;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
@@ -44,6 +46,26 @@ public partial class CellarViewModel : BaseViewModel
             
             foreach(var wine in wines)
                 Wines.Add(wine);
+
+            // Now fetch details form first wine to anticipate user selection
+            IsBusy = false;
+            IsRefreshing = false; // We don't want to block UI for speculative fetching
+
+            var firstWine = wines.FirstOrDefault();
+            if (firstWine != null)
+            {
+                if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+                {
+                    await NavigationService.DisplayAlert("No connectivity!",
+                        $"Please check internet and try again.", "OK");
+                    return;
+                }
+
+                await _cellarApiManager.ExecuteAsync((opt, api) => api.GetWineDetailsAsync(firstWine.Id, opt),
+                    options => options
+                        .WithCaching(CacheMode.FetchOrGet, TimeSpan.FromSeconds(10))
+                        .WithPriority(Priority.Speculative));
+            }
         }
         catch (ApizrException ex)
         {
@@ -77,7 +99,11 @@ public partial class CellarViewModel : BaseViewModel
 
         IsBusy = true;
 
-        var wineDetailsResponse = await _cellarApiManager.ExecuteAsync((opt, api) => api.GetWineDetailsAsync(wine.Id, opt));
+        var wineDetailsResponse = await _cellarApiManager.ExecuteAsync(
+            (opt, api) => api.GetWineDetailsAsync(wine.Id, opt),
+            options => options
+                .WithCaching(CacheMode.GetOrFetch, TimeSpan.FromSeconds(10))
+                .WithPriority(Priority.UserInitiated));
 
         IsBusy = false;
 

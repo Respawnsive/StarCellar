@@ -77,17 +77,27 @@ public partial class CellarViewModel : BaseViewModel
                 });
 
                 await NavigationService.ShowToast("Data fetched from remote api");
-
-                // Now fetch details form first wine to anticipate user selection
-                IsBusy = false; // We don't want to block UI for speculative fetching
-
-                var firstWine = wines.FirstOrDefault();
-                if(firstWine != null)
-                    _wineDetailsResponse = await _cellarSpeculativeApi.GetWineDetailsAsync(firstWine.Id);
             }
 
             foreach(var wine in wines)
                 Wines.Add(wine);
+
+            // Now fetch details form first wine to anticipate user selection
+            IsBusy = false;
+            IsRefreshing = false; // We don't want to block UI for speculative fetching
+
+            var firstWine = wines.FirstOrDefault();
+            if (firstWine != null)
+            {
+                if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+                {
+                    await NavigationService.DisplayAlert("No connectivity!",
+                        $"Please check internet and try again.", "OK");
+                    return;
+                }
+
+                _wineDetailsResponse = await _cellarSpeculativeApi.GetWineDetailsAsync(firstWine.Id);
+            }
         }
         catch (OperationCanceledException ex)
         {
