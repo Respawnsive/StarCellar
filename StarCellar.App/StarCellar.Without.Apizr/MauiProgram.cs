@@ -1,21 +1,14 @@
-﻿using System.Net;
-using System.Reflection;
+﻿using System.Reflection;
 using CommunityToolkit.Maui;
 using Fusillade;
 using HttpTracer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.ApplicationModel;
-using Polly;
-using Polly.Fallback;
-using Polly.Registry;
-using Polly.Retry;
 using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Files;
+using StarCellar.Without.Apizr.Services.Apis.User;
 using StarCellar.Without.Apizr.Services.Navigation;
 using StarCellar.Without.Apizr.Settings;
 using StarCellar.Without.Apizr.ViewModels;
@@ -62,6 +55,20 @@ public static class MauiProgram
             .AddSingleton<INavigationService, NavigationService>();
 
         // Refit
+        builder.Services.AddRefitClient<IUserApi>(new RefitSettings
+            {
+                HttpMessageHandlerFactory = () =>
+                    new HttpTracerHandler(
+                        new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.UserInitiated),
+                        HttpMessageParts.All)
+            })
+            .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
+                .GetRequiredService<IConfiguration>()
+                .GetRequiredSection("AppSettings")
+                .Get<AppSettings>()
+                .BaseAddress))
+            .AddStandardResilienceHandler();
+
         builder.Services.AddRefitClient<ICellarUserInitiatedApi>(new RefitSettings
             {
                 HttpMessageHandlerFactory = () =>
@@ -110,9 +117,14 @@ public static class MauiProgram
         builder.Services.AddAutoMapper(assembly);
 
         // Presentation
-        builder.Services
-            .AddSingleton<CellarViewModel>()
-            .AddSingleton<CellarPage>()
+        builder.Services.AddTransient<LoginViewModel>()
+            .AddTransient<LoginPage>()
+            .AddTransient<RegisterViewModel>()
+            .AddTransient<RegisterPage>()
+            .AddTransient<ProfileViewModel>()
+            .AddTransient<ProfilePage>()
+            .AddTransient<CellarViewModel>()
+            .AddTransient<CellarPage>()
             .AddTransient<WineDetailsViewModel>()
             .AddTransient<WineDetailsPage>()
             .AddTransient<WineEditViewModel>()

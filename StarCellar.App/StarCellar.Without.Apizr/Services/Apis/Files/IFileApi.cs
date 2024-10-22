@@ -6,6 +6,7 @@ namespace StarCellar.Without.Apizr.Services.Apis.Files
     {
         [Multipart]
         [Post("/upload")]
+        [Headers("Authorization: Bearer")]
         Task<string> UploadAsync([AliasAs("file")] StreamPart stream);
     }
 

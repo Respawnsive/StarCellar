@@ -182,11 +182,11 @@ app.MapGet("profile", UsersHandler.GetProfileAsync).RequireAuthorization(Constan
 app.MapPost("/upload", FilesHandler.UploadAsync).DisableAntiforgery();
 
 var wineRoutes = app.MapGroup("/wines");//.RequireAuthorization(Constants.Policies.Any);
-wineRoutes.MapGet("/", WinesHandler.GetAllWines).WithOpenApi();
-wineRoutes.MapGet("/{id}", WinesHandler.GetWine).WithOpenApi();
-wineRoutes.MapPost("/", WinesHandler.CreateWine).WithOpenApi();
-wineRoutes.MapPut("/{id}", WinesHandler.UpdateWine).WithOpenApi();
-wineRoutes.MapDelete("/{id}", WinesHandler.DeleteWine).WithOpenApi();
+wineRoutes.MapGet("/", WinesHandler.GetAllWines).WithOpenApi(); // Anonymous queries
+wineRoutes.MapGet("/{id}", WinesHandler.GetWine).WithOpenApi(); // Anonymous queries
+wineRoutes.MapPost("/", WinesHandler.CreateWine).WithOpenApi().RequireAuthorization(Constants.Policies.Any); // Authenticated commands
+wineRoutes.MapPut("/{id}", WinesHandler.UpdateWine).WithOpenApi().RequireAuthorization(Constants.Policies.Any); // Authenticated commands
+wineRoutes.MapDelete("/{id}", WinesHandler.DeleteWine).WithOpenApi().RequireAuthorization(Constants.Policies.Any); // Authenticated commands
 
 // Run
 app.Run();

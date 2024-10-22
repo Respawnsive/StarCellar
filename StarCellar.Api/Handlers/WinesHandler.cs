@@ -6,6 +6,9 @@ using StarCellar.Api.Utils;
 
 namespace StarCellar.Api.Handlers
 {
+    /// <summary>
+    /// Anonymous queries but authenticated commands
+    /// </summary>
     internal static class WinesHandler
     {
         internal static async Task<IResult> GetAllWines(AppDbContext appContext,
@@ -46,21 +49,19 @@ namespace StarCellar.Api.Handlers
             if (!MiniValidator.TryValidate(wineDto, out var errors)) 
                 return TypedResults.BadRequest(errors);
 
-            //if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
-            //    return TypedResults.BadRequest(errMsg);
-
-            var owner = await appContext.Users.FirstAsync(); // To comment while authenticated
+            if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
+                return TypedResults.BadRequest(errMsg);
 
             var (id, name, description, imageUrl, stock, score, _) = wineDto;
 
-            var ownerId = owner.Id;
+            var ownerId = user.Id;
 
             if (id == Guid.Empty) 
                 id = Guid.NewGuid();
 
-            //var owner = await appContext.Users.FindAsync(ownerId);
-            //if (owner is null) 
-            //    return TypedResults.NotFound($"User with Id {ownerId} not found.");
+            var owner = await appContext.Users.FindAsync(ownerId);
+            if (owner is null)
+                return TypedResults.NotFound($"User with Id {ownerId} not found.");
 
             var wineFromDb = await appContext.Wines.FindAsync(id);
             if (wineFromDb is not null) 
@@ -81,18 +82,16 @@ namespace StarCellar.Api.Handlers
             IHttpContextAccessor httpContextAccessor)
         {
             if (wineDto is null)
-                return TypedResults.BadRequest("Must include a Todo.");
+                return TypedResults.BadRequest("Must include a Wine.");
 
             if (!MiniValidator.TryValidate(wineDto, out var errors))
                 return TypedResults.BadRequest(errors);
 
-            //if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
-            //    return TypedResults.BadRequest(errMsg);
+            if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
+                return TypedResults.BadRequest(errMsg);
 
             var wine = await appContext.Wines.FindAsync(id);
-            if (wine is null 
-                //|| wine.OwnerId != user.Id
-                ) 
+            if (wine is null || wine.OwnerId != user.Id) 
                 return TypedResults.NotFound();
 
             wine.Name = wineDto.Name;
@@ -109,12 +108,10 @@ namespace StarCellar.Api.Handlers
         internal static async Task<IResult> DeleteWine(Guid id, AppDbContext appContext,
             IHttpContextAccessor httpContextAccessor)
         {
-            //if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
-            //    return TypedResults.BadRequest(errMsg);
+            if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
+                return TypedResults.BadRequest(errMsg);
 
-            if (await appContext.Wines.FindAsync(id) is not { } wine 
-                //|| wine.OwnerId != user.Id
-                ) 
+            if (await appContext.Wines.FindAsync(id) is not { } wine || wine.OwnerId != user.Id) 
                 return TypedResults.NotFound();
 
             appContext.Wines.Remove(wine);

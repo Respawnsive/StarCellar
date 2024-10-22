@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="StarCellar.Without.Apizr.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+    xmlns:viewModels="clr-namespace:StarCellar.Without.Apizr.ViewModels"
+    Title="LoginPage"
+    x:DataType="viewModels:LoginViewModel">
+    <ContentPage.Resources>
+        <toolkit:VariableMultiValueConverter x:Key="AllTrueConverter" ConditionType="All" />
+    </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
+    </ContentPage.Behaviors>
+    <Grid RowDefinitions="*,*">
+
+        <Image
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Aspect="AspectFill"
+            Source="background.jpg" />
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Padding="15"
+            HorizontalOptions="Center"
+            Spacing="20"
+            VerticalOptions="Center">
+            <VerticalStackLayout.Effects>
+                <uranium:BlurEffect AccentOpacity="0.2" Mode="Light" />
+            </VerticalStackLayout.Effects>
+
+            <Image HeightRequest="150" Source="wine_bottle_white.png" />
+
+            <Label
+                FontSize="42"
+                HorizontalOptions="Center"
+                Text="𝓢𝓽𝓪𝓻𝓒𝓮𝓵𝓵𝓪𝓻"
+                TextColor="{StaticResource Gray100}" />
+
+            <ActivityIndicator
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                VerticalOptions="Center" />
+
+        </VerticalStackLayout>
+
+        <Border
+            Grid.Row="1"
+            Margin="5"
+            BackgroundColor="White">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="20,20,0,0" />
+            </Border.StrokeShape>
+
+            <Grid>
+                <Label
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding IsInitialized, Converter={toolkit:InvertedBoolConverter}}"
+                    Text="Initializing..."
+                    VerticalOptions="Center" />
+
+                <VerticalStackLayout
+                    Padding="15"
+                    Spacing="30"
+                    VerticalOptions="Center">
+                    <VerticalStackLayout.IsVisible>
+                        <MultiBinding Converter="{StaticResource AllTrueConverter}">
+                            <Binding Path="IsInitialized" />
+                            <Binding Converter="{toolkit:InvertedBoolConverter}" Path="IsSigned" />
+                        </MultiBinding>
+                    </VerticalStackLayout.IsVisible>
+
+                    <input:FormView Spacing="20" SubmitCommand="{Binding LoginCommand}">
+                        <material:TextField
+                            Title="E-mail"
+                            AllowClear="True"
+                            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                                   Glyph={x:Static m:MaterialRegular.Email}}"
+                            ReturnType="Next"
+                            Text="{Binding Email}">
+                            <validation:RequiredValidation Message="E-mail required" />
+                            <validation:RegexValidation Message="Invalid e-mail format" Pattern="{x:Static input:AdvancedEntry.REGEX_EMAIL}" />
+                        </material:TextField>
+
+                        <material:TextField
+                            Title="Password"
+                            AllowClear="True"
+                            Icon="{FontImageSource FontFamily=MaterialRegular,
+                                                   Glyph={x:Static m:MaterialRegular.Key}}"
+                            IsPassword="True"
+                            ReturnCommand="{Binding LoginCommand}"
+                            ReturnType="Done"
+                            Text="{Binding Password}">
+                            <validation:RequiredValidation Message="Password required" />
+                            <material:TextField.Attachments>
+                                <material:TextFieldPasswordShowHideAttachment />
+                            </material:TextField.Attachments>
+                        </material:TextField>
+
+                        <Button
+                            Margin="0,15,0,0"
+                            input:FormView.IsSubmitButton="True"
+                            FontAttributes="Bold"
+                            Text="LOGIN" />
+
+                    </input:FormView>
+
+                    <Button
+                        Command="{Binding RegisterCommand}"
+                        FontAttributes="Bold"
+                        Text="REGISTER" />
+
+                </VerticalStackLayout>
+            </Grid>
+
+        </Border>
+
+    </Grid>
+</ContentPage>

@@ -12,12 +12,15 @@ namespace StarCellar.Without.Apizr.Services.Apis.Cellar
         Task<IApiResponse<WineDTO>> GetWineDetailsAsync(Guid id);
 
         [Post("/wines")]
+        [Headers("Authorization: Bearer")]
         Task<WineDTO> CreateWineAsync(WineDTO item);
         
         [Put("/wines/{id}")]
+        [Headers("Authorization: Bearer")]
         Task UpdateWineAsync(Guid id, WineDTO item);
         
         [Delete("/wines/{id}")]
+        [Headers("Authorization: Bearer")]
         Task DeleteWineAsync(Guid id);
     }
 
