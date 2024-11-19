@@ -10,6 +10,7 @@ namespace StarCellar.With.Apizr.Services.Apis.Files
         [Multipart]
         [Post("/upload")]
         [Priority(Priority.Background)]
+        [Headers("Authorization: Bearer")]
         Task<string> UploadAsync([AliasAs("file")] StreamPart stream);
     }
 }

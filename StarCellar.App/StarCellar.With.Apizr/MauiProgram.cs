@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Reflection;
 using Apizr;
+using Apizr.Logging;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
@@ -11,6 +12,8 @@ using Polly.Fallback;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Files;
+using StarCellar.With.Apizr.Services.Apis.User;
+using StarCellar.With.Apizr.Services.Apis.User.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Settings;
 using StarCellar.With.Apizr.ViewModels;
@@ -67,7 +70,8 @@ public static class MauiProgram
         builder.Services.AddApizr(
             registry => registry
                 .AddManagerFor<ICellarApi>()
-                .AddManagerFor<IFileApi>(),
+                .AddManagerFor<IFileApi>()
+                .AddManagerFor<IUserApi>(),
 
             options => options
                 .WithBaseAddress(
@@ -78,11 +82,16 @@ public static class MauiProgram
                         .BaseAddress)
                 .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
                     .AddStandardResilienceHandler())
-                .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == NetworkAccess.Internet)
+                .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == Microsoft.Maui.Networking.NetworkAccess.Internet)
                 .WithExCatching(OnException)
                 .WithInMemoryCacheHandler()
                 .WithAutoMapperMappingHandler()
-                .WithPriority());
+                .WithPriority()
+                //.WithRefitSettings(new RefitSettings{ExceptionFactory = BuildException})
+                .WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync));
+
+        builder.Services.AddRefitClient<ICellarApi>(new RefitSettings { ExceptionFactory = BuildException })
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://rx6z0kd7-7015.uks1.devtunnels.ms/wines"));
 
         // Register the in-memory cache
         builder.Services.AddMemoryCache();
@@ -91,7 +100,12 @@ public static class MauiProgram
         builder.Services.AddAutoMapper(assembly);
 
         // Presentation
-        builder.Services
+        builder.Services.AddTransient<LoginViewModel>()
+            .AddTransient<LoginPage>()
+            .AddTransient<RegisterViewModel>()
+            .AddTransient<RegisterPage>()
+            .AddTransient<ProfileViewModel>()
+            .AddTransient<ProfilePage>()
             .AddSingleton<CellarViewModel>()
             .AddSingleton<CellarPage>()
             .AddTransient<WineDetailsViewModel>()
@@ -102,6 +116,23 @@ public static class MauiProgram
         return builder.Build();
 	}
 
+    private static async Task<Exception> BuildException(HttpResponseMessage responseMessage)
+    {
+        if (responseMessage?.IsSuccessStatusCode == false)
+        {
+            var requestMessage = responseMessage.RequestMessage!;
+            var method = requestMessage.Method;
+
+            return await ApiException
+                .Create(requestMessage, method, responseMessage, new RefitSettings())
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            return await Task.FromResult<Exception>(null);
+        }
+    }
+
     private static async Task<bool> OnException(IServiceProvider serviceProvider, ApizrException ex)
     {
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
@@ -110,7 +141,10 @@ public static class MauiProgram
             case IOException innerEx:
             {
                 Debug.WriteLine($"Error: {innerEx.Message}");
-                await navigationService.DisplayAlert("No connectivity!", $"Please check internet and try again.", "OK"); 
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await navigationService.DisplayAlert("No connectivity!", $"Please check internet and try again.", "OK");
+                });
                 return true; // Handled
             }
             case OperationCanceledException:
@@ -118,8 +152,24 @@ public static class MauiProgram
                 Debug.WriteLine($"Operation cancelled");
                 return true; // Handled
             }
+            case ApiException {StatusCode: HttpStatusCode.Unauthorized}:
+            {
+                Debug.WriteLine($"Unauthorized");
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await navigationService.ShowToast("Unauthorized!");
+                    await navigationService.GoToAsync($"//{nameof(LoginPage)}");
+                });
+                return true; // Handled
+            }
             default:
                 return false;
         }
     }
+
+    private static Task<string> OnGetTokenAsync(HttpRequestMessage msg, CancellationToken ct) =>
+        SecureStorage.Default.GetAsync(nameof(Tokens.AccessToken));
+
+    private static Task OnSetTokenAsync(HttpRequestMessage msg, string tk, CancellationToken ct) =>
+        SecureStorage.Default.SetAsync(nameof(Tokens.AccessToken), tk);
 }

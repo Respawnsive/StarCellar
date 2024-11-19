@@ -1,9 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.Without.Apizr.Services.Apis.Files;
+using StarCellar.Without.Apizr.Services.Apis.User.Dtos;
 using StarCellar.Without.Apizr.Services.Navigation;
+using StarCellar.Without.Apizr.Views;
+using NetworkAccess = Microsoft.Maui.Networking.NetworkAccess;
 
 namespace StarCellar.Without.Apizr.ViewModels;
 
@@ -15,19 +19,22 @@ public partial class WineEditViewModel : BaseViewModel
     private readonly IFilePicker _filePicker;
     private readonly IFileBackgroundApi _fileBackgroundApi;
     private readonly IMapper _mapper;
+    private readonly ISecureStorage _secureStorage;
 
     public WineEditViewModel(INavigationService navigationService,
         ICellarUserInitiatedApi cellarUserInitiatedApi,
         IConnectivity connectivity,
         IFilePicker filePicker,
         IFileBackgroundApi fileBackgroundApi, 
-        IMapper mapper) : base(navigationService)
+        IMapper mapper, 
+        ISecureStorage secureStorage) : base(navigationService)
     {
         _cellarUserInitiatedApi = cellarUserInitiatedApi;
         _connectivity = connectivity;
         _filePicker = filePicker;
         _fileBackgroundApi = fileBackgroundApi;
         _mapper = mapper;
+        _secureStorage = secureStorage;
     }
 
     [ObservableProperty] private Wine _wine;
@@ -99,9 +106,28 @@ public partial class WineEditViewModel : BaseViewModel
                 Wine = _mapper.Map<Wine>(wineDto);
             }
             else
+            {
+                var confirm = await NavigationService.DisplayAlert("Authentication", "Test clearing token?", "Yes", "No");
+                if (confirm)
+                    _secureStorage.Remove(nameof(Tokens.AccessToken));
+
                 await _cellarUserInitiatedApi.UpdateWineAsync(wineDto.Id, wineDto);
+            }
 
             await NavigationService.GoToAsync("..");
+        }
+        catch (ApiException ex)
+        {
+            if (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                await NavigationService.ShowToast("Unauthorized");
+                await NavigationService.GoToAsync($"//{nameof(LoginPage)}");
+            }
+            else
+            {
+                Debug.WriteLine($"Unable to save Wine: {ex.Message}");
+                await NavigationService.DisplayAlert("Error!", ex.Message, "OK"); 
+            }
         }
         catch (Exception ex)
         {

@@ -9,6 +9,7 @@ using Refit;
 using StarCellar.Without.Apizr.Services.Apis.Cellar;
 using StarCellar.Without.Apizr.Services.Apis.Files;
 using StarCellar.Without.Apizr.Services.Apis.User;
+using StarCellar.Without.Apizr.Services.Apis.User.Dtos;
 using StarCellar.Without.Apizr.Services.Navigation;
 using StarCellar.Without.Apizr.Settings;
 using StarCellar.Without.Apizr.ViewModels;
@@ -60,7 +61,8 @@ public static class MauiProgram
                 HttpMessageHandlerFactory = () =>
                     new HttpTracerHandler(
                         new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.UserInitiated),
-                        HttpMessageParts.All)
+                        HttpMessageParts.All),
+                AuthorizationHeaderValueGetter = OnGetTokenAsync
             })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
@@ -74,7 +76,8 @@ public static class MauiProgram
                 HttpMessageHandlerFactory = () =>
                     new HttpTracerHandler(
                         new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.UserInitiated),
-                        HttpMessageParts.All)
+                        HttpMessageParts.All),
+                AuthorizationHeaderValueGetter = OnGetTokenAsync
             })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
@@ -88,7 +91,8 @@ public static class MauiProgram
                 HttpMessageHandlerFactory = () =>
                     new HttpTracerHandler(
                         new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.Speculative),
-                        HttpMessageParts.All)
+                        HttpMessageParts.All),
+                AuthorizationHeaderValueGetter = OnGetTokenAsync
             })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
@@ -132,4 +136,7 @@ public static class MauiProgram
 
         return builder.Build();
 	}
+
+    private static Task<string> OnGetTokenAsync(HttpRequestMessage message, CancellationToken ct) =>
+        SecureStorage.Default.GetAsync(nameof(Tokens.AccessToken));
 }

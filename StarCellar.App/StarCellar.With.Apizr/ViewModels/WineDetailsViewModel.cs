@@ -1,6 +1,7 @@
 ﻿using Apizr;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
+using StarCellar.With.Apizr.Services.Apis.User.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Views;
 
@@ -47,7 +48,7 @@ public partial class WineDetailsViewModel : BaseViewModel
                 return;
 
             IsBusy = true;
-
+            
             await _cellarApiManager.ExecuteAsync((opt, api) => api.DeleteWineAsync(Wine.Id, opt));
 
             await NavigationService.GoToAsync("..");

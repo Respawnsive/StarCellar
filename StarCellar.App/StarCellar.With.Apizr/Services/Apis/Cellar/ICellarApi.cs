@@ -9,9 +9,10 @@ using Fusillade;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 
+[assembly:Log]
 namespace StarCellar.With.Apizr.Services.Apis.Cellar
 {
-    [BaseAddress("/wines"), Log]
+    [BaseAddress("/wines")]
     public interface ICellarApi
     {
         [Get("/")]
@@ -26,12 +27,19 @@ namespace StarCellar.With.Apizr.Services.Apis.Cellar
         Task<IApiResponse<WineDTO>> GetWineDetailsAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
 
         [Post("/")]
+        [Headers("Authorization: Bearer")]
         Task<WineDTO> CreateWineAsync(WineDTO item, [RequestOptions] IApizrRequestOptions options);
         
         [Put("/{id}")]
+        [Headers("Authorization: Bearer")]
         Task UpdateWineAsync(Guid id, WineDTO item, [RequestOptions] IApizrRequestOptions options);
         
         [Delete("/{id}")]
+        [Headers("Authorization: Bearer")]
         Task DeleteWineAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
+
+        [Delete("/{id}")]
+        //[Headers("Authorization: Bearer")]
+        Task DeleteWineAsync(Guid id);
     }
 }

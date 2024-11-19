@@ -3,6 +3,7 @@ using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.With.Apizr.Services.Apis.Files;
+using StarCellar.With.Apizr.Services.Apis.User.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
 
 namespace StarCellar.With.Apizr.ViewModels;
@@ -14,17 +15,19 @@ public partial class WineEditViewModel : BaseViewModel
     private readonly IConnectivity _connectivity;
     private readonly IFilePicker _filePicker;
     private readonly IApizrManager<IFileApi> _fileApiManager;
+    private readonly ISecureStorage _secureStorage;
 
     public WineEditViewModel(INavigationService navigationService,
         IApizrManager<ICellarApi> cellarApiManager,
         IConnectivity connectivity,
         IFilePicker filePicker,
-        IApizrManager<IFileApi> fileApiManager) : base(navigationService)
+        IApizrManager<IFileApi> fileApiManager, ISecureStorage secureStorage) : base(navigationService)
     {
         _cellarApiManager = cellarApiManager;
         _connectivity = connectivity;
         _filePicker = filePicker;
         _fileApiManager = fileApiManager;
+        _secureStorage = secureStorage;
     }
 
     [ObservableProperty] private Wine _wine;
@@ -89,7 +92,13 @@ public partial class WineEditViewModel : BaseViewModel
             if (Wine.Id == Guid.Empty)
                 Wine = await _cellarApiManager.ExecuteAsync<Wine, WineDTO>((opt, api, wineDto) => api.CreateWineAsync(wineDto, opt), Wine);
             else
+            {
+                var confirm = await NavigationService.DisplayAlert("Authentication", "Test clearing token?", "Yes", "No");
+                if (confirm)
+                    _secureStorage.Remove(nameof(Tokens.AccessToken));
+
                 await _cellarApiManager.ExecuteAsync<Wine, WineDTO>((opt, api, wineDto) => api.UpdateWineAsync(wineDto.Id, wineDto, opt), Wine);
+            }
 
             await NavigationService.GoToAsync("..");
         }
