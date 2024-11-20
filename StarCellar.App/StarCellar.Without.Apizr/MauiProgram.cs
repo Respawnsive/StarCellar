@@ -120,6 +120,9 @@ public static class MauiProgram
         // AutoMapper
         builder.Services.AddAutoMapper(assembly);
 
+        // Register MediatR
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
         // Presentation
         builder.Services.AddTransient<LoginViewModel>()
             .AddTransient<LoginPage>()
