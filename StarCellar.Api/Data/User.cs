@@ -92,5 +92,7 @@ namespace StarCellar.Api.Data
 
         [Required]
         public string Password { get; set; }
+
+        public TimeSpan? AccessTokenValidity { get; set; }
     }
 }

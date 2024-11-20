@@ -88,13 +88,16 @@ public partial class LoginViewModel : BaseViewModel
             return;
         }
 
-        // Validation
+        var isShortToken = await NavigationService.DisplayAlert("Authentication", "Test short token expiration?", "Yes", "No");
+
         var signInRequest = new SignInRequest()
         {
             Login = Email,
-            Password = Password
+            Password = Password,
+            AccessTokenValidity = isShortToken ? TimeSpan.FromSeconds(10) : null
         };
 
+        // Validation
         if (!MiniValidator.TryValidate(signInRequest, out var errors))
         {
             var sb = new StringBuilder();

@@ -60,7 +60,7 @@ namespace StarCellar.Api.Handlers
             var result = await userManager.CheckPasswordAsync(user, credentials.Password);
             if (!result) return BadRequest("Incorrect password.");
 
-            var accessToken = tokenGenerator.GenerateAccessToken(user);
+            var accessToken = tokenGenerator.GenerateAccessToken(user, credentials.AccessTokenValidity);
             var (refreshTokenId, refreshToken) = tokenGenerator.GenerateRefreshToken();
 
             var token = await tokenContext.UserRefreshTokens.Where(token => token.UserId == user.Id).FirstOrDefaultAsync();

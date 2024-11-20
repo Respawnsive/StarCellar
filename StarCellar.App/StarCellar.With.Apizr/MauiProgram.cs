@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Fallback;
 using Refit;
+using StarCellar.With.Apizr.Helpers;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Files;
 using StarCellar.With.Apizr.Services.Apis.User;
@@ -87,17 +88,21 @@ public static class MauiProgram
                 .WithInMemoryCacheHandler()
                 .WithAutoMapperMappingHandler()
                 .WithPriority()
-                //.WithRefitSettings(new RefitSettings{ExceptionFactory = BuildException})
-                .WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync));
-
-        builder.Services.AddRefitClient<ICellarApi>(new RefitSettings { ExceptionFactory = BuildException })
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://rx6z0kd7-7015.uks1.devtunnels.ms/wines"));
+                //.WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync) // Auth with local factory methods
+                .WithAuthenticationHandler(typeof(AuthenticationHandler<>)) // Auth with resolved open generic handler
+                );
 
         // Register the in-memory cache
         builder.Services.AddMemoryCache();
 
         // AutoMapper
         builder.Services.AddAutoMapper(assembly);
+
+        // Authentication handler
+        builder.Services.AddTransient(typeof(AuthenticationHandler<>));
+
+        // Allow Lazy resolution
+        builder.Services.AddTransient(typeof(Lazy<>), typeof(Lazier<>));
 
         // Presentation
         builder.Services.AddTransient<LoginViewModel>()
@@ -115,23 +120,6 @@ public static class MauiProgram
 
         return builder.Build();
 	}
-
-    private static async Task<Exception> BuildException(HttpResponseMessage responseMessage)
-    {
-        if (responseMessage?.IsSuccessStatusCode == false)
-        {
-            var requestMessage = responseMessage.RequestMessage!;
-            var method = requestMessage.Method;
-
-            return await ApiException
-                .Create(requestMessage, method, responseMessage, new RefitSettings())
-                .ConfigureAwait(false);
-        }
-        else
-        {
-            return await Task.FromResult<Exception>(null);
-        }
-    }
 
     private static async Task<bool> OnException(IServiceProvider serviceProvider, ApizrException ex)
     {
@@ -172,4 +160,6 @@ public static class MauiProgram
 
     private static Task OnSetTokenAsync(HttpRequestMessage msg, string tk, CancellationToken ct) =>
         SecureStorage.Default.SetAsync(nameof(Tokens.AccessToken), tk);
+
+    internal class Lazier<T>(IServiceProvider provider) : Lazy<T>(provider.GetRequiredService<T>);
 }

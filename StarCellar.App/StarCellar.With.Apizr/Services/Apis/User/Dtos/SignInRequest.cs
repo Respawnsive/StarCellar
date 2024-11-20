@@ -11,5 +11,7 @@ namespace StarCellar.With.Apizr.Services.Apis.User.Dtos
         [Required]
         [DataType(DataType.Password), MinLength(8)]
         public string Password { get; set; }
+
+        public TimeSpan? AccessTokenValidity { get; set; }
     }
 }

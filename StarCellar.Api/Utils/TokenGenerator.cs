@@ -25,7 +25,7 @@ namespace StarCellar.Api.Utils
             _refreshTokenValidityInDays = config.GetValue<int>("Jwt:RefreshTokenValidityInDays")!;
         }
 
-        public string GenerateAccessToken(User user)
+        public string GenerateAccessToken(User user, TimeSpan? accessTokenValidity = null)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -40,7 +40,7 @@ namespace StarCellar.Api.Utils
                     new Claim(ClaimTypes.Role, user.Role),
                     }
                 ),
-                Expires = DateTime.UtcNow.AddMinutes(_accessTokenValidityInMinutes),
+                Expires = accessTokenValidity != null ? DateTime.UtcNow.Add(accessTokenValidity.Value) : DateTime.UtcNow.AddMinutes(_accessTokenValidityInMinutes),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(_accessTokenSecret),
                     SecurityAlgorithms.HmacSha256Signature
