@@ -1,5 +1,6 @@
 ﻿using Apizr;
 using Apizr.Caching;
+using Apizr.Mediation.Requesting.Sending;
 using Fusillade;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
@@ -12,13 +13,16 @@ public partial class CellarViewModel : BaseViewModel
 {
     private readonly IApizrManager<ICellarApi> _cellarApiManager;
     private readonly IConnectivity _connectivity;
+    private readonly IApizrMediator<ICellarApi> _cellarMediator;
 
     public CellarViewModel(INavigationService navigationService,
         IApizrManager<ICellarApi> cellarApiManager, 
-        IConnectivity connectivity) : base(navigationService)
+        IConnectivity connectivity, 
+        IApizrMediator<ICellarApi> cellarMediator) : base(navigationService)
     {
         _cellarApiManager = cellarApiManager;
         _connectivity = connectivity;
+        _cellarMediator = cellarMediator;
     }
 
     public ObservableCollection<Wine> Wines { get; } = new();
@@ -54,14 +58,7 @@ public partial class CellarViewModel : BaseViewModel
             var firstWine = wines.FirstOrDefault();
             if (firstWine != null)
             {
-                if (_connectivity.NetworkAccess != NetworkAccess.Internet)
-                {
-                    await NavigationService.DisplayAlert("No connectivity!",
-                        $"Please check internet and try again.", "OK");
-                    return;
-                }
-
-                await _cellarApiManager.ExecuteAsync((opt, api) => api.GetWineDetailsAsync(firstWine.Id, opt),
+                await _cellarMediator.SendFor((opt, api) => api.GetWineDetailsAsync(firstWine.Id, opt),
                     options => options
                         .WithCaching(CacheMode.FetchOrGet, TimeSpan.FromSeconds(10))
                         .WithPriority(Priority.Speculative));
@@ -99,7 +96,7 @@ public partial class CellarViewModel : BaseViewModel
 
         IsBusy = true;
 
-        var wineDetailsResponse = await _cellarApiManager.ExecuteAsync(
+        var wineDetailsResponse = await _cellarMediator.SendFor(
             (opt, api) => api.GetWineDetailsAsync(wine.Id, opt),
             options => options
                 .WithCaching(CacheMode.GetOrFetch, TimeSpan.FromSeconds(10))

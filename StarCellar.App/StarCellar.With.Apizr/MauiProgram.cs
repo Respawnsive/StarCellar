@@ -90,6 +90,7 @@ public static class MauiProgram
                 .WithPriority()
                 //.WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync) // Auth with local factory methods
                 .WithAuthenticationHandler(typeof(AuthenticationHandler<>)) // Auth with resolved open generic handler
+                .WithMediation()
                 );
 
         // Register the in-memory cache
@@ -103,6 +104,9 @@ public static class MauiProgram
 
         // Allow Lazy resolution
         builder.Services.AddTransient(typeof(Lazy<>), typeof(Lazier<>));
+
+        // Register MediatR
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         // Presentation
         builder.Services.AddTransient<LoginViewModel>()
