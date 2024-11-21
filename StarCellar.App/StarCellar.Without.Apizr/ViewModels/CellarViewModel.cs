@@ -139,12 +139,21 @@ public partial class CellarViewModel : BaseViewModel
         if (wine == null)
             return;
 
+        string errorMessage = null;
         // FetchOrGet behavior
         if (_wineDetails?.Id != wine.Id)
         {
             IsBusy = true;
 
-            _wineDetails = await _sender.Send(new GetWineDetailsQuery(wine.Id, Priority.UserInitiated));
+            var result = await _sender.Send(new GetWineDetailsOptionalQuery(wine.Id, Priority.UserInitiated));
+            result.Match(wineDetails =>
+            {
+                _wineDetails = wineDetails;
+            }, error =>
+            {
+                _wineDetails = null;
+                errorMessage = error;
+            });
 
             IsBusy = false;
         }
@@ -159,7 +168,7 @@ public partial class CellarViewModel : BaseViewModel
         else
         {
             await NavigationService.DisplayAlert($"Error",
-                "Request failed with no cached data!", "OK"); 
+                errorMessage ?? "Request failed with no cached data!", "OK"); 
         }
     }
 
