@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Reflection;
 using Apizr;
+using Apizr.Extending;
 using Apizr.Logging;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Configuration;
@@ -91,6 +92,7 @@ public static class MauiProgram
                 //.WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync) // Auth with local factory methods
                 .WithAuthenticationHandler(typeof(AuthenticationHandler<>)) // Auth with resolved open generic handler
                 .WithMediation()
+                .WithOptionalMediation()
                 );
 
         // Register the in-memory cache

@@ -24,7 +24,12 @@ namespace StarCellar.With.Apizr.Services.Apis.Cellar
         [Get("/{id}")]
         [Cache(CacheMode.FetchOrGet, "00:00:10")]
         [Priority(Priority.Speculative)]
-        Task<IApiResponse<WineDTO>> GetWineDetailsAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
+        Task<IApiResponse<WineDTO>> GetSafeWineDetailsAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
+
+        [Get("/{id}")]
+        [Cache(CacheMode.FetchOrGet, "00:00:10")]
+        [Priority(Priority.Speculative)]
+        Task<WineDTO> GetWineDetailsAsync(Guid id, [RequestOptions] IApizrRequestOptions options);
 
         [Post("/")]
         [Headers("Authorization: Bearer")]

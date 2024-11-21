@@ -59,6 +59,7 @@
 	  <PackageReference Include="Apizr.Integrations.AutoMapper" Version="6.4.0-preview.4" />
 	  <PackageReference Include="Apizr.Integrations.Fusillade" Version="6.4.0-preview.4" />
 	  <PackageReference Include="Apizr.Integrations.MediatR" Version="6.4.0-preview.4" />
+	  <PackageReference Include="Apizr.Integrations.Optional" Version="6.4.0-preview.4" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />

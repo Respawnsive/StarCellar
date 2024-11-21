@@ -1,7 +1,9 @@
 ﻿using Apizr;
 using Apizr.Caching;
 using Apizr.Mediation.Requesting.Sending;
+using Apizr.Optional.Requesting.Sending;
 using Fusillade;
+using Optional.Async.Extensions;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
@@ -14,15 +16,18 @@ public partial class CellarViewModel : BaseViewModel
     private readonly IApizrManager<ICellarApi> _cellarApiManager;
     private readonly IConnectivity _connectivity;
     private readonly IApizrMediator<ICellarApi> _cellarMediator;
+    private readonly IApizrOptionalMediator<ICellarApi> _cellarOptionalMediator;
 
     public CellarViewModel(INavigationService navigationService,
         IApizrManager<ICellarApi> cellarApiManager, 
         IConnectivity connectivity, 
-        IApizrMediator<ICellarApi> cellarMediator) : base(navigationService)
+        IApizrMediator<ICellarApi> cellarMediator, 
+        IApizrOptionalMediator<ICellarApi> cellarOptionalMediator) : base(navigationService)
     {
         _cellarApiManager = cellarApiManager;
         _connectivity = connectivity;
         _cellarMediator = cellarMediator;
+        _cellarOptionalMediator = cellarOptionalMediator;
     }
 
     public ObservableCollection<Wine> Wines { get; } = new();
@@ -58,7 +63,7 @@ public partial class CellarViewModel : BaseViewModel
             var firstWine = wines.FirstOrDefault();
             if (firstWine != null)
             {
-                await _cellarMediator.SendFor((opt, api) => api.GetWineDetailsAsync(firstWine.Id, opt),
+                await _cellarMediator.SendFor((opt, api) => api.GetSafeWineDetailsAsync(firstWine.Id, opt),
                     options => options
                         .WithCaching(CacheMode.FetchOrGet, TimeSpan.FromSeconds(10))
                         .WithPriority(Priority.Speculative));
@@ -96,32 +101,42 @@ public partial class CellarViewModel : BaseViewModel
 
         IsBusy = true;
 
-        var wineDetailsResponse = await _cellarMediator.SendFor(
+        var result = await _cellarOptionalMediator.SendFor(
             (opt, api) => api.GetWineDetailsAsync(wine.Id, opt),
             options => options
                 .WithCaching(CacheMode.GetOrFetch, TimeSpan.FromSeconds(10))
                 .WithPriority(Priority.UserInitiated));
 
-        IsBusy = false;
-
-        if (!wineDetailsResponse.IsSuccess && // Something went wrong
-            !wineDetailsResponse.Exception.Handled) // And it's not yet handled
+        var winDetails = await result.MatchAsync(async wineDetails =>
         {
-            Debug.WriteLine($"Unable to get wine details: {wineDetailsResponse.Exception!.Message}");
-            await NavigationService.DisplayAlert($"Error from rsp {wineDetailsResponse.ApiResponse.StatusCode}!", wineDetailsResponse.Exception!.Message, "OK"); 
-        }
+            await NavigationService.ShowToast("Data comes from remote api");
 
-        if (wineDetailsResponse.Result != null) // We got data
+            return wineDetails;
+        }, async error =>
         {
-            // Toast the data source
-            if (wineDetailsResponse.DataSource == ApizrResponseDataSource.Request)
-                await NavigationService.ShowToast("Data comes from remote api");
-            else if (wineDetailsResponse.DataSource == ApizrResponseDataSource.Cache)
+            if (!error.Handled)
+            {
+                Debug.WriteLine($"Unable to get wine details: {error}");
+                await NavigationService.DisplayAlert($"Error from rsp!", error.Message, "OK");
+            }
+
+            if (error.CachedResult != null)
+            {
                 await NavigationService.ShowToast("Data comes from local cache");
 
+                return error.CachedResult;
+            }
+
+            return null;
+        });
+
+        IsBusy = false;
+
+        if(winDetails != null)
+        {
             await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
             {
-                {nameof(Wine), wine }
+                {nameof(Wine), wine}
             });
         }
     }
