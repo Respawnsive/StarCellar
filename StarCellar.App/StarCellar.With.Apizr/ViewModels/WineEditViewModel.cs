@@ -1,4 +1,5 @@
 ﻿using Apizr;
+using Apizr.Transferring.Managing;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
 using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
@@ -14,19 +15,20 @@ public partial class WineEditViewModel : BaseViewModel
     private readonly IApizrManager<ICellarApi> _cellarApiManager;
     private readonly IConnectivity _connectivity;
     private readonly IFilePicker _filePicker;
-    private readonly IApizrManager<IFileApi> _fileApiManager;
+    private readonly IApizrUploadManager _uploadManager;
     private readonly ISecureStorage _secureStorage;
 
     public WineEditViewModel(INavigationService navigationService,
         IApizrManager<ICellarApi> cellarApiManager,
         IConnectivity connectivity,
         IFilePicker filePicker,
-        IApizrManager<IFileApi> fileApiManager, ISecureStorage secureStorage) : base(navigationService)
+        IApizrUploadManager uploadManager, 
+        ISecureStorage secureStorage) : base(navigationService)
     {
         _cellarApiManager = cellarApiManager;
         _connectivity = connectivity;
         _filePicker = filePicker;
-        _fileApiManager = fileApiManager;
+        _uploadManager = uploadManager;
         _secureStorage = secureStorage;
     }
 
@@ -55,7 +57,7 @@ public partial class WineEditViewModel : BaseViewModel
 
                 await using var stream = await result.OpenReadAsync();
                 var streamPart = new StreamPart(stream, result.FileName);
-                Wine.ImageUrl = await _fileApiManager.ExecuteAsync(api => api.UploadAsync(streamPart));
+                var response = await _uploadManager.UploadAsync(streamPart);
             }
         }
         catch (ApizrException ex)

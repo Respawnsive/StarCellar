@@ -5,8 +5,12 @@ namespace StarCellar.Api.Handlers
 {
     internal static class FilesHandler
     {
-        internal static async Task<IResult> UploadAsync(IFormFile file)
+        internal static async Task<IResult> UploadAsync(IFormFile file)//,
+            //IHttpContextAccessor httpContextAccessor)
         {
+            //if (!UserClaimsValidator.TryValidate(httpContextAccessor.HttpContext?.User, out var user, out var errMsg))
+            //    return TypedResults.BadRequest(errMsg);
+
             var fileName = Path.GetFileName(file.FileName);
             var uniqueFileName = string.Concat(Path.GetFileNameWithoutExtension(fileName), "_", Guid.NewGuid().ToString().AsSpan(0, 4), Path.GetExtension(fileName));
 

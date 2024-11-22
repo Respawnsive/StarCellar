@@ -1,18 +1,15 @@
 ﻿using System.Net;
 using System.Reflection;
 using Apizr;
-using Apizr.Logging;
 using CommunityToolkit.Maui;
+using Fusillade;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
 using Polly;
-using Polly.Fallback;
 using Refit;
 using StarCellar.With.Apizr.Helpers;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
-using StarCellar.With.Apizr.Services.Apis.Files;
 using StarCellar.With.Apizr.Services.Apis.User;
 using StarCellar.With.Apizr.Services.Apis.User.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
@@ -71,8 +68,13 @@ public static class MauiProgram
         builder.Services.AddApizr(
             registry => registry
                 .AddManagerFor<ICellarApi>()
-                .AddManagerFor<IFileApi>()
-                .AddManagerFor<IUserApi>(),
+                //.AddManagerFor<IFileApi>()
+                .AddManagerFor<IUserApi>()
+                .AddUploadManager(options => options
+                    .WithLogging()
+                    .WithBasePath("/upload")
+                    .WithHeaders(["Authorization: Bearer"])
+                    .WithPriority(Priority.Background)),
 
             options => options
                 .WithBaseAddress(

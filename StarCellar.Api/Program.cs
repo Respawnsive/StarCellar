@@ -179,7 +179,7 @@ app.MapPost("refresh", UsersHandler.RefreshTokenAsync);
 app.MapPost("signout", UsersHandler.SignOutAsync).RequireAuthorization(Constants.Policies.Any);
 app.MapGet("profile", UsersHandler.GetProfileAsync).RequireAuthorization(Constants.Policies.Any);
 
-app.MapPost("/upload", FilesHandler.UploadAsync).DisableAntiforgery();
+app.MapPost("/upload", FilesHandler.UploadAsync).DisableAntiforgery();//.RequireAuthorization(Constants.Policies.Any);
 
 var wineRoutes = app.MapGroup("/wines");//.RequireAuthorization(Constants.Policies.Any);
 wineRoutes.MapGet("/", WinesHandler.GetAllWines).WithOpenApi(); // Anonymous queries

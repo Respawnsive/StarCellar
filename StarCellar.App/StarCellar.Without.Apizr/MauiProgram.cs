@@ -106,8 +106,9 @@ public static class MauiProgram
                 HttpMessageHandlerFactory = () =>
                     new HttpTracerHandler(
                         new RateLimitedHttpMessageHandler(new HttpClientHandler(), Priority.Background),
-                        HttpMessageParts.RequestHeaders)
-            })
+                        HttpMessageParts.RequestHeaders),
+                AuthorizationHeaderValueGetter = OnGetTokenAsync
+        })
             .ConfigureHttpClient((sp, c) => c.BaseAddress = new Uri(sp
                 .GetRequiredService<IConfiguration>()
                 .GetRequiredSection("AppSettings")
