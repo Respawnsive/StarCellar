@@ -1,4 +1,5 @@
 ﻿using Apizr;
+using Apizr.Progressing;
 using Apizr.Transferring.Managing;
 using Refit;
 using StarCellar.With.Apizr.Services.Apis.Cellar;
@@ -15,14 +16,14 @@ public partial class WineEditViewModel : BaseViewModel
     private readonly IApizrManager<ICellarApi> _cellarApiManager;
     private readonly IConnectivity _connectivity;
     private readonly IFilePicker _filePicker;
-    private readonly IApizrUploadManager _uploadManager;
+    private readonly IApizrUploadManagerWith<string> _uploadManager;
     private readonly ISecureStorage _secureStorage;
 
     public WineEditViewModel(INavigationService navigationService,
         IApizrManager<ICellarApi> cellarApiManager,
         IConnectivity connectivity,
         IFilePicker filePicker,
-        IApizrUploadManager uploadManager, 
+        IApizrUploadManagerWith<string> uploadManager, 
         ISecureStorage secureStorage) : base(navigationService)
     {
         _cellarApiManager = cellarApiManager;
@@ -33,6 +34,7 @@ public partial class WineEditViewModel : BaseViewModel
     }
 
     [ObservableProperty] private Wine _wine;
+    [ObservableProperty] public int _progressPercentage;
 
     [RelayCommand]
     private async Task SetImageAsync()
@@ -57,7 +59,9 @@ public partial class WineEditViewModel : BaseViewModel
 
                 await using var stream = await result.OpenReadAsync();
                 var streamPart = new StreamPart(stream, result.FileName);
-                var response = await _uploadManager.UploadAsync(streamPart);
+                var progress = new ApizrProgress();
+                progress.ProgressChanged += (_, args) => ProgressPercentage = args.ProgressPercentage;
+                Wine.ImageUrl = await _uploadManager.UploadAsync(streamPart, options => options.WithProgress(progress));
             }
         }
         catch (ApizrException ex)
@@ -71,6 +75,7 @@ public partial class WineEditViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+            ProgressPercentage = 0;
         }
     }
 

@@ -70,7 +70,7 @@ public static class MauiProgram
                 .AddManagerFor<ICellarApi>()
                 //.AddManagerFor<IFileApi>()
                 .AddManagerFor<IUserApi>()
-                .AddUploadManager(options => options
+                .AddUploadManagerWith<string>(options => options
                     .WithLogging()
                     .WithBasePath("/upload")
                     .WithHeaders(["Authorization: Bearer"])
@@ -93,6 +93,7 @@ public static class MauiProgram
                 //.WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync) // Auth with local factory methods
                 .WithAuthenticationHandler(typeof(AuthenticationHandler<>)) // Auth with resolved open generic handler
                 .WithMediation()
+                .WithProgress()
                 );
 
         // Register the in-memory cache
