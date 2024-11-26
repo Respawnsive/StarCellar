@@ -58,6 +58,7 @@
 	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="6.4.0" />
 	  <PackageReference Include="Apizr.Extensions.Microsoft.FileTransfer" Version="6.4.0" />
 	  <PackageReference Include="Apizr.Integrations.AutoMapper" Version="6.4.0" />
+	  <PackageReference Include="Apizr.Integrations.FileTransfer.MediatR" Version="6.4.0" />
 	  <PackageReference Include="Apizr.Integrations.Fusillade" Version="6.4.0" />
 	  <PackageReference Include="Apizr.Integrations.MediatR" Version="6.4.0" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
@@ -71,6 +72,7 @@
 	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.93" />
 	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.93" />
 	  <PackageReference Include="MiniValidation" Version="0.9.1" />
+	  <PackageReference Include="Refit" Version="8.0.0" />
 	  <PackageReference Include="UraniumUI" Version="2.10.2" />
 	  <PackageReference Include="UraniumUI.Blurs" Version="2.10.2" />
 	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.10.2" />

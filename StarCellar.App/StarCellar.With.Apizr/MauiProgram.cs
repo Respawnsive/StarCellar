@@ -8,10 +8,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Refit;
+using StarCellar.Services.Apis;
 using StarCellar.With.Apizr.Helpers;
-using StarCellar.With.Apizr.Services.Apis.Cellar;
-using StarCellar.With.Apizr.Services.Apis.User;
-using StarCellar.With.Apizr.Services.Apis.User.Dtos;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Settings;
 using StarCellar.With.Apizr.ViewModels;
@@ -64,37 +62,43 @@ public static class MauiProgram
             pipelineBuilder.AddTimeout(TimeSpan.FromSeconds(1));
         });
 
-        // Apizr
-        builder.Services.AddApizr(
-            registry => registry
-                .AddManagerFor<ICellarApi>()
-                //.AddManagerFor<IFileApi>()
-                .AddManagerFor<IUserApi>()
-                .AddUploadManagerWith<string>(options => options
-                    .WithLogging()
-                    .WithBasePath("/upload")
-                    .WithHeaders(["Authorization: Bearer"])
-                    .WithPriority(Priority.Background)),
+        builder.Services.ConfigureStarCellarApizrManagers(options => options
+            .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == Microsoft.Maui.Networking.NetworkAccess.Internet)
+            .WithExCatching(OnException)
+            .WithAuthenticationHandler(typeof(AuthenticationHandler<>))
+            .WithProgress());
 
-            options => options
-                .WithBaseAddress(
-                    sp => sp
-                        .GetRequiredService<IConfiguration>()
-                        .GetRequiredSection("AppSettings")
-                        .Get<AppSettings>()
-                        .BaseAddress)
-                .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
-                    .AddStandardResilienceHandler())
-                .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == Microsoft.Maui.Networking.NetworkAccess.Internet)
-                .WithExCatching(OnException)
-                .WithInMemoryCacheHandler()
-                .WithAutoMapperMappingHandler()
-                .WithPriority()
-                //.WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync) // Auth with local factory methods
-                .WithAuthenticationHandler(typeof(AuthenticationHandler<>)) // Auth with resolved open generic handler
-                .WithMediation()
-                .WithProgress()
-                );
+        // Apizr
+        //builder.Services.AddApizr(
+        //    registry => registry
+        //        .AddManagerFor<ICellarApi>()
+        //        //.AddManagerFor<IFileApi>()
+        //        .AddManagerFor<IUserApi>()
+        //        .AddUploadManagerWith<string>(options => options
+        //            .WithLogging()
+        //            .WithBasePath("/upload")
+        //            .WithHeaders(["Authorization: Bearer"])
+        //            .WithPriority(Priority.Background)),
+
+        //    options => options
+        //        .WithBaseAddress(
+        //            sp => sp
+        //                .GetRequiredService<IConfiguration>()
+        //                .GetRequiredSection("AppSettings")
+        //                .Get<AppSettings>()
+        //                .BaseAddress)
+        //        .ConfigureHttpClientBuilder(clientBuilder => clientBuilder
+        //            .AddStandardResilienceHandler())
+        //        .WithConnectivityHandler<IConnectivity>(connectivity => connectivity.NetworkAccess == Microsoft.Maui.Networking.NetworkAccess.Internet)
+        //        .WithExCatching(OnException)
+        //        .WithInMemoryCacheHandler()
+        //        .WithAutoMapperMappingHandler()
+        //        .WithPriority()
+        //        //.WithAuthenticationHandler(OnGetTokenAsync, OnSetTokenAsync) // Auth with local factory methods
+        //        .WithAuthenticationHandler(typeof(AuthenticationHandler<>)) // Auth with resolved open generic handler
+        //        .WithMediation()
+        //        .WithProgress()
+        //        );
 
         // Register the in-memory cache
         builder.Services.AddMemoryCache();

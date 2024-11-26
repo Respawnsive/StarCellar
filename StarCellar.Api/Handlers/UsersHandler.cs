@@ -12,7 +12,7 @@ namespace StarCellar.Api.Handlers
         internal static async Task<IResult> SignUpAsync(
             AppDbContext appContext, 
             UserManager<User> userManager, 
-            UserCreateDTO user
+            SignUpRequest user
             )
         {
             if (user is null) return BadRequest();
@@ -44,7 +44,7 @@ namespace StarCellar.Api.Handlers
             UserManager<User> userManager,
             TokenGenerator tokenGenerator,
             UserRefreshTokenDbContext tokenContext,
-            UserLoginDTO credentials,
+            SignInRequest credentials,
             HttpResponse response
         )
         {
@@ -123,7 +123,7 @@ namespace StarCellar.Api.Handlers
                 return BadRequest(errMsg);
 
             var dbUser = await appContext.Users.FindAsync(user.Id);
-            return dbUser == null ? NotFound() : Ok(dbUser);
+            return dbUser == null ? NotFound() : Ok(new UserDTO(dbUser));
 
         }
 

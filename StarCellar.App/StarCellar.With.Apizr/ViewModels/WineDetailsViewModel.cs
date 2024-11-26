@@ -1,7 +1,6 @@
 ﻿using Apizr;
-using StarCellar.With.Apizr.Services.Apis.Cellar;
-using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
-using StarCellar.With.Apizr.Services.Apis.User.Dtos;
+using StarCellar.Services.Apis;
+using StarCellar.With.Apizr.Models;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Views;
 

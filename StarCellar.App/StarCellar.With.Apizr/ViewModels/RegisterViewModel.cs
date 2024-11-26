@@ -2,8 +2,7 @@
 using Apizr;
 using CommunityToolkit.Maui.Core;
 using MiniValidation;
-using StarCellar.With.Apizr.Services.Apis.User;
-using StarCellar.With.Apizr.Services.Apis.User.Dtos;
+using StarCellar.Services.Apis;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Views;
 
@@ -47,15 +46,7 @@ namespace StarCellar.With.Apizr.ViewModels
             }
 
             // Validation
-            var signUpRequest = new SignUpRequest
-            {
-                FullName = FullName,
-                Email = Email,
-                Username = Username,
-                Password = Password,
-                ConfirmPassword = ConfirmPassword,
-                Role = "User"
-            };
+            var signUpRequest = new SignUpRequest(null, 0, ConfirmPassword, Email, FullName, Password, "User", Username);
             if (!MiniValidator.TryValidate(signUpRequest, out var errors))
             {
                 var sb = new StringBuilder();
@@ -75,20 +66,16 @@ namespace StarCellar.With.Apizr.ViewModels
             {
                 IsBusy = true;
 
-                var user = await _userApiManager.ExecuteAsync(api => api.SignUpAsync(signUpRequest));
+                var user = await _userApiManager.ExecuteAsync((opt, api) => api.SignUpAsync(signUpRequest, opt));
                 if (user.Id == default)
                 {
                     await NavigationService.ShowToast("Unable to signup, please try again later.", ToastDuration.Long);
                     return;
                 }
 
-                var signInRequest = new SignInRequest()
-                {
-                    Login = Email,
-                    Password = Password
-                };
+                var signInRequest = new SignInRequest(null, Email, Password);
 
-                var tokens = await _userApiManager.ExecuteAsync(api => api.SignInAsync(signInRequest));
+                var tokens = await _userApiManager.ExecuteAsync((opt, api) => api.SignInAsync(signInRequest, opt));
                 if (string.IsNullOrEmpty(tokens.AccessToken) || string.IsNullOrWhiteSpace(tokens.RefreshToken))
                 {
                     await NavigationService.ShowToast("Unable to signin, please try again later.", ToastDuration.Long);

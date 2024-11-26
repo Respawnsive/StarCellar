@@ -173,20 +173,78 @@ app.Map("/", async context =>
     context.Response.Redirect("/swagger");
 });
 
-app.MapPost("signup", UsersHandler.SignUpAsync);
-app.MapPost("signin", UsersHandler.SignInAsync);
-app.MapPost("refresh", UsersHandler.RefreshTokenAsync);
-app.MapPost("signout", UsersHandler.SignOutAsync).RequireAuthorization(Constants.Policies.Any);
-app.MapGet("profile", UsersHandler.GetProfileAsync).RequireAuthorization(Constants.Policies.Any);
+app.MapPost("signup", UsersHandler.SignUpAsync)
+    .WithName("SignUpAsync")
+    .WithTags("User")
+    .WithOpenApi()
+    .Produces<UserDTO>();
 
-app.MapPost("/upload", FilesHandler.UploadAsync).DisableAntiforgery();//.RequireAuthorization(Constants.Policies.Any);
+app.MapPost("signin", UsersHandler.SignInAsync)
+    .WithName("SignInAsync")
+    .WithTags("User")
+    .WithOpenApi()
+    .Produces<Tokens>();
+
+app.MapPost("refresh", UsersHandler.RefreshTokenAsync)
+    .WithName("RefreshAsync")
+    .WithTags("User")
+    .WithOpenApi()
+    .Produces<Tokens>();
+
+app.MapPost("signout", UsersHandler.SignOutAsync)
+    .WithName("SignOutAsync")
+    .WithTags("User")
+    .WithOpenApi()
+    .RequireAuthorization(Constants.Policies.Any)
+    .Produces(StatusCodes.Status204NoContent);
+
+app.MapGet("profile", UsersHandler.GetProfileAsync)
+    .WithName("GetProfileAsync")
+    .WithTags("User")
+    .WithOpenApi()
+    .RequireAuthorization(Constants.Policies.Any)
+    .Produces<UserDTO>();
+
+app.MapPost("/upload", FilesHandler.UploadAsync)
+    .WithName("UploadAsync")
+    .WithTags("File")
+    .WithOpenApi()
+    .DisableAntiforgery()
+    .Produces<string>();//.RequireAuthorization(Constants.Policies.Any);
 
 var wineRoutes = app.MapGroup("/wines");//.RequireAuthorization(Constants.Policies.Any);
-wineRoutes.MapGet("/", WinesHandler.GetAllWines).WithOpenApi(); // Anonymous queries
-wineRoutes.MapGet("/{id}", WinesHandler.GetWine).WithOpenApi(); // Anonymous queries
-wineRoutes.MapPost("/", WinesHandler.CreateWine).WithOpenApi().RequireAuthorization(Constants.Policies.Any); // Authenticated commands
-wineRoutes.MapPut("/{id}", WinesHandler.UpdateWine).WithOpenApi().RequireAuthorization(Constants.Policies.Any); // Authenticated commands
-wineRoutes.MapDelete("/{id}", WinesHandler.DeleteWine).WithOpenApi().RequireAuthorization(Constants.Policies.Any); // Authenticated commands
+wineRoutes.MapGet("/", WinesHandler.GetAllWines)
+    .WithName("GetWinesAsync")
+    .WithTags("Cellar")
+    .WithOpenApi()
+    .Produces<WineDTO[]>(); // Anonymous queries
+
+wineRoutes.MapGet("/{id}", WinesHandler.GetWine)
+    .WithName("GetWineDetailsAsync")
+    .WithTags("Cellar")
+    .WithOpenApi()
+    .Produces<WineDTO>(); // Anonymous queries
+
+wineRoutes.MapPost("/", WinesHandler.CreateWine)
+    .WithName("CreateWineAsync")
+    .WithTags("Cellar")
+    .WithOpenApi()
+    .Produces<WineDTO>()
+    .RequireAuthorization(Constants.Policies.Any); // Authenticated commands
+
+wineRoutes.MapPut("/{id}", WinesHandler.UpdateWine)
+    .WithName("UpdateWineAsync")
+    .WithTags("Cellar")
+    .WithOpenApi()
+    .RequireAuthorization(Constants.Policies.Any)
+    .Produces(StatusCodes.Status204NoContent); // Authenticated commands
+
+wineRoutes.MapDelete("/{id}", WinesHandler.DeleteWine)
+    .WithName("DeleteWineAsync")
+    .WithTags("Cellar")
+    .WithOpenApi()
+    .RequireAuthorization(Constants.Policies.Any)
+    .Produces(StatusCodes.Status204NoContent); // Authenticated commands
 
 // Run
 app.Run();

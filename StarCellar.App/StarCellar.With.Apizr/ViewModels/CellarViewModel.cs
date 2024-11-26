@@ -2,8 +2,8 @@
 using Apizr.Caching;
 using Apizr.Mediation.Requesting.Sending;
 using Fusillade;
-using StarCellar.With.Apizr.Services.Apis.Cellar;
-using StarCellar.With.Apizr.Services.Apis.Cellar.Dtos;
+using StarCellar.Services.Apis;
+using StarCellar.With.Apizr.Models;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Views;
 
@@ -45,7 +45,7 @@ public partial class CellarViewModel : BaseViewModel
             var cts = new CancellationTokenSource();
             //cts.CancelAfter(1000); // For cancellation demo only
 
-            var wines = await _cellarApiManager.ExecuteAsync<IList<Wine>, IList<WineDTO>>((opt, api) => api.GetWinesAsync(opt), 
+            var wines = await _cellarApiManager.ExecuteAsync<ICollection<Wine>, ICollection<WineDTO>>((opt, api) => api.GetWinesAsync(opt), 
                 options => options.WithCancellation(cts.Token));
             
             foreach(var wine in wines)
@@ -104,26 +104,26 @@ public partial class CellarViewModel : BaseViewModel
 
         IsBusy = false;
 
-        if (!wineDetailsResponse.IsSuccess && // Something went wrong
-            !wineDetailsResponse.Exception.Handled) // And it's not yet handled
-        {
-            Debug.WriteLine($"Unable to get wine details: {wineDetailsResponse.Exception!.Message}");
-            await NavigationService.DisplayAlert($"Error from rsp {wineDetailsResponse.ApiResponse.StatusCode}!", wineDetailsResponse.Exception!.Message, "OK"); 
-        }
+        //if (!wineDetailsResponse.IsSuccess && // Something went wrong
+        //    !wineDetailsResponse.Exception.Handled) // And it's not yet handled
+        //{
+        //    Debug.WriteLine($"Unable to get wine details: {wineDetailsResponse.Exception!.Message}");
+        //    await NavigationService.DisplayAlert($"Error from rsp {wineDetailsResponse.ApiResponse.StatusCode}!", wineDetailsResponse.Exception!.Message, "OK"); 
+        //}
 
-        if (wineDetailsResponse.Result != null) // We got data
-        {
-            // Toast the data source
-            if (wineDetailsResponse.DataSource == ApizrResponseDataSource.Request)
-                await NavigationService.ShowToast("Data comes from remote api");
-            else if (wineDetailsResponse.DataSource == ApizrResponseDataSource.Cache)
-                await NavigationService.ShowToast("Data comes from local cache");
+        //if (wineDetailsResponse.Result != null) // We got data
+        //{
+        //    // Toast the data source
+        //    if (wineDetailsResponse.DataSource == ApizrResponseDataSource.Request)
+        //        await NavigationService.ShowToast("Data comes from remote api");
+        //    else if (wineDetailsResponse.DataSource == ApizrResponseDataSource.Cache)
+        //        await NavigationService.ShowToast("Data comes from local cache");
 
             await NavigationService.GoToAsync($"{nameof(WineDetailsPage)}", true, new Dictionary<string, object>
             {
                 {nameof(Wine), wine }
             });
-        }
+        //}
     }
 
     [RelayCommand]

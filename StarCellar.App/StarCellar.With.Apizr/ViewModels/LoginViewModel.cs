@@ -3,8 +3,8 @@ using Apizr;
 using CommunityToolkit.Maui.Core;
 using MiniValidation;
 using Refit;
-using StarCellar.With.Apizr.Services.Apis.User;
-using StarCellar.With.Apizr.Services.Apis.User.Dtos;
+using StarCellar.Services.Apis;
+using StarCellar.With.Apizr.Models;
 using StarCellar.With.Apizr.Services.Navigation;
 using StarCellar.With.Apizr.Views;
 
@@ -46,7 +46,7 @@ public partial class LoginViewModel : BaseViewModel
             if (IsSigned)
             {
                 var tokens = new Tokens(accessToken, refreshToken);
-                tokens = await _userApiManager.ExecuteAsync(api => api.RefreshAsync(tokens));
+                tokens = await _userApiManager.ExecuteAsync((opt, api) => api.RefreshAsync(tokens, opt));
 
                 if (!string.IsNullOrWhiteSpace(tokens.AccessToken) && !string.IsNullOrWhiteSpace(tokens.RefreshToken))
                 {
@@ -90,12 +90,7 @@ public partial class LoginViewModel : BaseViewModel
 
         var isShortToken = await NavigationService.DisplayAlert("Authentication", "Test short token expiration?", "Yes", "No");
 
-        var signInRequest = new SignInRequest()
-        {
-            Login = Email,
-            Password = Password,
-            AccessTokenValidity = isShortToken ? TimeSpan.FromSeconds(10) : null
-        };
+        var signInRequest = new SignInRequest(isShortToken ? TimeSpan.FromSeconds(10).ToString() : null, Email, Password);
 
         // Validation
         if (!MiniValidator.TryValidate(signInRequest, out var errors))
@@ -117,7 +112,7 @@ public partial class LoginViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            var tokens = await _userApiManager.ExecuteAsync(api => api.SignInAsync(signInRequest));
+            var tokens = await _userApiManager.ExecuteAsync((opt, api) => api.SignInAsync(signInRequest, opt));
             if (string.IsNullOrEmpty(tokens.AccessToken) || string.IsNullOrWhiteSpace(tokens.RefreshToken))
             {
                 await NavigationService.ShowToast("Unable to signin, please try again later.", ToastDuration.Long);

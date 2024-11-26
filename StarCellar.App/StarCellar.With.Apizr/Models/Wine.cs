@@ -1,6 +1,12 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using StarCellar.Services.Apis;
 
-namespace StarCellar.With.Apizr.Services.Apis.Cellar.Dtos
+namespace StarCellar.With.Apizr.Models
 {
     public partial class Wine : ObservableObject
     {
@@ -13,9 +19,6 @@ namespace StarCellar.With.Apizr.Services.Apis.Cellar.Dtos
         [ObservableProperty] public Guid _ownerId;
         [ObservableProperty] public int _viewCount;
     }
-
-    public record WineDTO(Guid Id, string Name, string Description, string ImageUrl, int Stock, int Score,
-        Guid OwnerId);
 
     public class WineMapper : Profile
     {

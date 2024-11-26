@@ -13,7 +13,7 @@ namespace StarCellar.Api.Data
 
         public User() { }
 
-        public User(UserCreateDTO dto)
+        public User(SignUpRequest dto)
         {
             FullName = dto.FullName;
             Email = dto.Email;
@@ -58,7 +58,7 @@ namespace StarCellar.Api.Data
         }
     }
 
-    public record UserCreateDTO
+    public record SignUpRequest
     {
         [Required]
         [EmailAddress]
@@ -85,7 +85,7 @@ namespace StarCellar.Api.Data
         public string Address { get; set; }
     }
 
-    public record UserLoginDTO
+    public record SignInRequest
     {
         [Required]
         public string Login { get; set; }

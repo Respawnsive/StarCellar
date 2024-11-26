@@ -1,8 +1,7 @@
 ﻿using Apizr;
 using Apizr.Authenticating;
 using Apizr.Configuring.Manager;
-using StarCellar.With.Apizr.Services.Apis.User;
-using StarCellar.With.Apizr.Services.Apis.User.Dtos;
+using StarCellar.Services.Apis;
 
 namespace StarCellar.With.Apizr.Helpers
 {
@@ -41,7 +40,7 @@ namespace StarCellar.With.Apizr.Helpers
                 {
                     // Yes we have both. Let's try to refresh the token.
                     var tokens = new Tokens(token, refreshToken);
-                    tokens = await _userManager.Value.ExecuteAsync(api => api.RefreshAsync(tokens));
+                    tokens = await _userManager.Value.ExecuteAsync((opt, api) => api.RefreshAsync(tokens, opt));
                     if (!string.IsNullOrWhiteSpace(tokens.AccessToken) && !string.IsNullOrWhiteSpace(tokens.RefreshToken))
                     {
                         // Save the new tokens.
