@@ -47,11 +47,11 @@
 
 	<ItemGroup>
 	  <PackageReference Include="AlohaKit" Version="1.0.100" />
-	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	  <PackageReference Include="MiniValidation" Version="0.9.1" />
-	  <PackageReference Include="Refit.HttpClientFactory" Version="7.2.1" />
+	  <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
 	  <PackageReference Include="UraniumUI" Version="2.10.2" />
 	  <PackageReference Include="UraniumUI.Blurs" Version="2.10.2" />
 	  <PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="2.10.2" />
@@ -80,10 +80,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.91" />
+	  <PackageReference Update="Microsoft.Maui.Controls" Version="9.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />
+	  <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="9.0.10" />
 	</ItemGroup>
 </Project>

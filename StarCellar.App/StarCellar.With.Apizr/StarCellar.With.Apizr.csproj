@@ -20,6 +20,7 @@
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 		<DefaultLanguage>EN-US</DefaultLanguage>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -47,12 +48,10 @@
 
 	<ItemGroup>
 	  <PackageReference Include="AlohaKit" Version="1.0.100" />
-	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="6.2.0" />
-	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
+	  <PackageReference Include="Apizr.Extensions.Microsoft.DependencyInjection" Version="6.4.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-	  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.91" />
-	  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.91" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	  <PackageReference Include="MiniValidation" Version="0.9.1" />
 	  <PackageReference Include="UraniumUI" Version="2.10.2" />
 	  <PackageReference Include="UraniumUI.Blurs" Version="2.10.2" />
@@ -79,5 +78,13 @@
 	  <MauiXaml Update="Resources\Styles\Styles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="Microsoft.Maui.Controls" Version="9.0.10" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="9.0.10" />
 	</ItemGroup>
 </Project>
