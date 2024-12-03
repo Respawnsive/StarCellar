@@ -2,9 +2,9 @@
 A walkthrough tutorial about [Apizr](https://apizr.net), a Refit based web api client manager, but resilient (retry, connectivity, cache, auth, log, priority, etc...).
 
 This repository contains the source code of the StarCellar sample app built during the corresponding end-to-end walkthrough.
-Each covered module get a blog post about it, a video on the YouTube Apizr Playlist and a dedicated branch on GitHub with both With and Without Apizr sample project.
-You can switch between branches to jump between modules within the same opened solution.
-Each module begins from the end of the previous one.
+Each covered episode get a blog post about it, a video on the YouTube Apizr Playlist and a dedicated branch on GitHub with both With and Without Apizr sample project.
+You can switch between branches to jump between episodes within the same opened solution.
+Each episode begins from the end of the previous one.
 
 Before you jump into this walkthrough, it is highly recommended to take a look at the official documentation of Apizr and its source code:
 
@@ -14,11 +14,11 @@ If you want to get a quick and small picture of it, please head to the Apizr's [
 
 This StarCellar walkthrough aims to dive pretty much deeper into most of Apizr features, so take a breath and let's dive!
 
-Here is the module list:
+Here is the episode list:
 
-|Module title|Sample code|Blog post|Playlist video|
+|Episode title|Sample code|Blog post|Playlist video|
 |---|---|---|---|
-|01 - Getting started|[![Branch - 01-Getting_started](https://img.shields.io/badge/browse-sample_code-green?style=for-the-badge)](https://github.com/Respawnsive/StarCellar/tree/01-Getting_started "01 - Getting started")|[![Blog - 01 - Getting started](https://img.shields.io/badge/read-blog_post-lightgrey?style=for-the-badge)](# "Not yet available")|[![Watch - 01-Getting_started](https://img.shields.io/badge/playlist_video-lightgrey?style=for-the-badge&logo=youtube&logoColor=white)](# "Not yet available")|
+|01 - Getting started|[![Branch - 01 - Getting started](https://img.shields.io/badge/browse-sample_code-green?style=for-the-badge)](https://github.com/Respawnsive/StarCellar/tree/01-Getting_started "01 - Getting started")|[![Blog - 01 - Getting started](https://img.shields.io/badge/read-blog_post-blue?style=for-the-badge)](https://www.respawnsive.com/starcellar-e01-getting-started-with-apizr/ "01 - Getting started")|[![Watch - 01 - Getting started](https://img.shields.io/badge/playlist_video-red?style=for-the-badge&amp;logo=youtube&amp;logoColor=white)](https://www.youtube.com/watch?v=mVL31izXmg4&amp;list=PLP7ES6CZYy_2-1mj9yoXrSjlYbn4zU5zq&amp;index=1 "01 - Getting started")|
 |02 - Adjusting basics|[![Branch - 02-Adjusting_basics](https://img.shields.io/badge/browse-sample_code-green?style=for-the-badge)](https://github.com/Respawnsive/StarCellar/tree/02-Adjusting_basics "02 - Adjusting basics")|[![Blog - 02 - Adjusting basics](https://img.shields.io/badge/read-blog_post-lightgrey?style=for-the-badge)](# "Not yet available")|[![Watch - 02 - Adjusting basics](https://img.shields.io/badge/playlist_video-lightgrey?style=for-the-badge&logo=youtube&logoColor=white)](# "Not yet available")|
 |03 - Configuring logging|[![Branch - 03 - Configuring logging](https://img.shields.io/badge/browse-sample_code-green?style=for-the-badge)](https://github.com/Respawnsive/StarCellar/tree/03-Configuring_logging "03 - Configuring logging")|[![Blog - 03 - Configuring logging](https://img.shields.io/badge/read-blog_post-lightgrey?style=for-the-badge)](# "Not yet available")|[![Watch - 03 - Configuring logging](https://img.shields.io/badge/playlist_video-lightgrey?style=for-the-badge&logo=youtube&logoColor=white)](# "Not yet available")|
 |04 - Applying policies|[![Branch - 04 - Applying policies](https://img.shields.io/badge/browse-sample_code-green?style=for-the-badge)](https://github.com/Respawnsive/StarCellar/tree/04-Applying_policies "04 - Applying policies")|[![Blog - 04 - Applying policies](https://img.shields.io/badge/read-blog_post-lightgrey?style=for-the-badge)](# "Not yet available")|[![Watch - 04 - Applying policies](https://img.shields.io/badge/playlist_video-lightgrey?style=for-the-badge&logo=youtube&logoColor=white)](# "Not yet available")|
